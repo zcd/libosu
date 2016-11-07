@@ -1,11 +1,9 @@
 package Replay;
 
+import Constants.BitmaskEnum;
 import Constants.KeyStroke;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public final class Action {
     private final long sincePrevActionMillis;
@@ -51,7 +49,7 @@ public final class Action {
             long millis = scanner.nextLong();
             float x = scanner.nextFloat();
             float y = scanner.nextFloat();
-            EnumSet<KeyStroke> keys = KeyStroke.fromInt(scanner.nextInt());
+            EnumSet<KeyStroke> keys = BitmaskEnum.fromMask(KeyStroke.class, scanner.nextInt());
 
             return new Action(millis, x, y, keys);
         }
