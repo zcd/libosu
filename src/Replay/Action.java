@@ -2,7 +2,9 @@ package Replay;
 
 import Constants.BitmaskEnum;
 import Constants.KeyStroke;
+import com.google.common.collect.ImmutableList;
 
+import javax.management.ImmutableDescriptor;
 import java.util.*;
 
 public final class Action {
@@ -35,12 +37,12 @@ public final class Action {
     }
 
     public static List<Action> parseActions(String input) {
-        List<Action> actions = new ArrayList<Action>();
-        try (Scanner scanner = new Scanner(input).useDelimiter(",") ){
+        ImmutableList.Builder<Action> builder = ImmutableList.builder();
+        try (Scanner scanner = new Scanner(input).useDelimiter(",")) {
             while (scanner.hasNext()) {
-                actions.add(parseSingleAction(scanner.next()));
+                builder.add(parseSingleAction(scanner.next()));
             }
-            return actions;
+            return builder.build();
         }
     }
 
