@@ -51,7 +51,7 @@ public final class Uleb128 {
                 throw new RuntimeException("ULEB128 value exceeds maximum value for long type.");
             }
 
-        } while ((read & MASK_CONTINUE) == MASK_CONTINUE);
+        } while ((read & MASK_CONTINUE) != 0);
         return value;
     }
 
