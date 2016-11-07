@@ -47,7 +47,7 @@ public class Uleb128Test {
         try {
             Uleb128.fromByteStream(new ByteArrayInputStream(yuuuge));
             Assert.fail();
-        } catch (RuntimeException expected) {
+        } catch (ArithmeticException expected) {
             Assert.assertThat(expected.getMessage(), CoreMatchers.containsString("exceeds maximum value"));
         }
     }

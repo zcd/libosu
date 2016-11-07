@@ -48,7 +48,7 @@ public final class Uleb128 {
             value += ((long) read & MASK_DATA) << bitSize;
             bitSize += 7;
             if (bitSize >= BITS_LONG) {
-                throw new RuntimeException("ULEB128 value exceeds maximum value for long type.");
+                throw new ArithmeticException("ULEB128 value exceeds maximum value for long type.");
             }
 
         } while ((read & MASK_CONTINUE) != 0);
