@@ -1,7 +1,5 @@
 package Constants;
 
-import java.util.EnumSet;
-
 public enum KeyStroke implements BitmaskEnum {
     MOUSE1(1),
     MOUSE2(2),

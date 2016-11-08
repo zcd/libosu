@@ -1,7 +1,5 @@
 package Constants;
 
-import java.util.EnumSet;
-
 public enum Mod implements BitmaskEnum {
     NONE(0),
     NO_FAIL(1 << 0),
