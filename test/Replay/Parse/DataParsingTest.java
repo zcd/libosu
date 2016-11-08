@@ -1,5 +1,9 @@
-package Replay;
+package Replay.Parse;
 
+import Replay.Action;
+import Replay.Parse.DataParsing;
+import Replay.Parse.ReplayParser;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.EnumSet;
@@ -10,14 +14,12 @@ import static Constants.KeyStroke.KEY2;
 import static Constants.KeyStroke.MOUSE1;
 import static Constants.KeyStroke.MOUSE2;
 
-import org.junit.Assert;
-
-public class ActionTest {
+public class DataParsingTest {
     private static final double EPSILON = 0.001;
 
     @Test
-    public void parseSingleAction() throws Exception {
-        Action action = Action.parseSingleAction("10|1.5|3.14|15");
+    public void parseAction() throws Exception {
+        Action action = ReplayParser.parseAction("10|1.5|3.14|15");
         Assert.assertEquals(10, action.getMillisSincePrevAction());
         Assert.assertEquals(1.5, action.getX(), EPSILON);
         Assert.assertEquals(3.14, action.getY(), EPSILON);
@@ -32,7 +34,7 @@ public class ActionTest {
 
     @Test
     public void parseActions_SingleAction() throws Exception {
-        List<Action> actions = Action.parseActions("10|1.5|3.14|15");
+        List<Action> actions = DataParsing.toList("10|1.5|3.14|15", ReplayParser::parseAction);
         Assert.assertEquals(1, actions.size());
 
         Action action = actions.get(0);
@@ -44,7 +46,7 @@ public class ActionTest {
 
     @Test
     public void parseActions_MultipleActions() throws Exception {
-        List<Action> actions = Action.parseActions("10|1.5|3.14|15,5|120|120.1|10");
+        List<Action> actions = DataParsing.toList("10|1.5|3.14|15,5|120|120.1|10", ReplayParser::parseAction);
         Assert.assertEquals(2, actions.size());
         Action action;
 
@@ -60,5 +62,4 @@ public class ActionTest {
         Assert.assertEquals(120.1, action.getY(), EPSILON);
         Assert.assertTrue(action.getKeyPresses().containsAll(EnumSet.of(MOUSE2, KEY2)));
     }
-
 }
