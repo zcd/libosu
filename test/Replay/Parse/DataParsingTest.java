@@ -1,8 +1,6 @@
 package Replay.Parse;
 
 import Replay.Action;
-import Replay.Parse.DataParsing;
-import Replay.Parse.ReplayParser;
 import org.junit.Assert;
 import org.junit.Test;
 
