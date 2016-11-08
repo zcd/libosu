@@ -56,7 +56,7 @@ public final class Uleb128 {
     }
 
     private static byte[] encode(long value) {
-        ArrayList<Byte> bytes = new ArrayList<Byte>();
+        ArrayList<Byte> bytes = new ArrayList<>();
         do {
             byte b = (byte) (value & MASK_DATA);
             value >>= 7;
@@ -68,7 +68,7 @@ public final class Uleb128 {
 
         byte[] ret = new byte[bytes.size()];
         for (int i = 0; i < bytes.size(); i++) {
-            ret[i] = bytes.get(i).byteValue();
+            ret[i] = bytes.get(i);
         }
         return ret;
     }
