@@ -42,7 +42,7 @@ public final class Uleb128 {
 
         do {
             if ((read = bytes.read()) == -1) {
-                throw new IOException("Premature EOF");
+                throw new IOException("Unexpected EOF");
             }
 
             value += ((long) read & MASK_DATA) << bitSize;

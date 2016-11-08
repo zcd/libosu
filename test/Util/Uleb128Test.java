@@ -26,7 +26,7 @@ public class Uleb128Test {
             Uleb128.fromByteStream(new ByteArrayInputStream(new byte[] {}));
             Assert.fail();
         } catch (IOException expected) {
-            Assert.assertThat(expected.getMessage(), CoreMatchers.containsString("Premature EOF"));
+            Assert.assertThat(expected.getMessage(), CoreMatchers.containsString("Unexpected EOF"));
         }
     }
 
