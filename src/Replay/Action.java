@@ -1,12 +1,8 @@
 package Replay;
 
-import Constants.BitmaskEnum;
 import Constants.KeyStroke;
-import com.google.common.collect.ImmutableList;
 
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Scanner;
 
 
 public final class Action {
@@ -36,26 +32,5 @@ public final class Action {
 
     public EnumSet<KeyStroke> getKeyPresses() {
         return keys;
-    }
-
-    public static List<Action> parseActions(String input) {
-        ImmutableList.Builder<Action> builder = ImmutableList.builder();
-        try (Scanner scanner = new Scanner(input).useDelimiter(",")) {
-            while (scanner.hasNext()) {
-                builder.add(parseSingleAction(scanner.next()));
-            }
-            return builder.build();
-        }
-    }
-
-    public static Action parseSingleAction(String input) {
-        try (Scanner scanner = new Scanner(input).useDelimiter("[|]")) {
-            long millis = scanner.nextLong();
-            float x = scanner.nextFloat();
-            float y = scanner.nextFloat();
-            EnumSet<KeyStroke> keys = BitmaskEnum.fromMask(KeyStroke.class, scanner.nextInt());
-
-            return new Action(millis, x, y, keys);
-        }
     }
 }
