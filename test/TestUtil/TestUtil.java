@@ -6,6 +6,22 @@ import org.hamcrest.Matcher;
 import org.junit.Assert;
 
 public class TestUtil {
+    private static final Matcher<Exception> ANY_MATCHER = new BaseMatcher<Exception>() {
+        @Override
+        public void describeTo(Description description) {
+        }
+
+        @Override
+        public boolean
+        matches(Object item) {
+            return true;
+        }
+    };
+
+    public static void assertThrows(CheckedFunction fn, Class<? extends Exception> exceptionType) throws Exception {
+        assertThrows(fn, exceptionType, ANY_MATCHER);
+    }
+
     public static void assertThrows(CheckedFunction fn, Class<? extends Exception> exceptionType, Matcher<Exception>
             exceptionMatcher) throws Exception {
         try {
@@ -39,5 +55,6 @@ public class TestUtil {
         void apply() throws Exception;
     }
 
-    private TestUtil() {}
+    private TestUtil() {
+    }
 }
