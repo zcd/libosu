@@ -26,7 +26,7 @@ public class DataParsingTest {
 
     @Test
     public void parseActions_Empty() throws Exception {
-        List<Action> actions = Action.parseActions("");
+        List<Action> actions = DataParsing.toList("", ReplayParser::parseAction);
         Assert.assertTrue(actions.isEmpty());
     }
 
