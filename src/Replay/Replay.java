@@ -8,9 +8,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 /**
- * Data class for a osu! Replay file.
- *
- * https://osu.ppy.sh/wiki/Osr_(file_format)
+ * Data class for a <a href="https://osu.ppy.sh/wiki/Osr_(file_format)">osu! replay file</a>.
  */
 @AutoValue
 public abstract class Replay {
