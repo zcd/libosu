@@ -1,8 +1,10 @@
-package Replay.Parse;
+package Replay.IO;
 
+import TestUtil.TestCategories;
 import TestUtil.TestUtil;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.io.InputStream;
 import java.util.zip.DataFormatException;
 
 @SuppressWarnings({"PointlessArithmeticExpression", "PointlessBitwiseExpression"})
+@Category(TestCategories.UnitTest.class)
 public class ReplayScannerTest {
     @Test
     public void next_EmptyBytes() throws Exception {

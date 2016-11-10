@@ -1,8 +1,10 @@
-package Replay.Parse;
+package Replay.IO;
 
 import Replay.Action;
+import TestUtil.TestCategories;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -12,12 +14,13 @@ import static Constants.KeyStroke.KEY2;
 import static Constants.KeyStroke.MOUSE1;
 import static Constants.KeyStroke.MOUSE2;
 
-public class DataParsingTest {
+@Category(TestCategories.UnitTest.class)
+public class StringDecodeTest {
     private static final double EPSILON = 0.001;
 
     @Test
     public void parseAction() throws Exception {
-        Action action = ReplayParser.parseAction("10|1.5|3.14|15");
+        Action action = StringDecode.parseAction("10|1.5|3.14|15");
         Assert.assertEquals(10, action.getMillisSincePrevAction());
         Assert.assertEquals(1.5, action.getX(), EPSILON);
         Assert.assertEquals(3.14, action.getY(), EPSILON);
@@ -26,13 +29,13 @@ public class DataParsingTest {
 
     @Test
     public void parseActions_Empty() throws Exception {
-        List<Action> actions = DataParsing.toList("", ReplayParser::parseAction);
+        List<Action> actions = StringDecode.toList("", StringDecode::parseAction);
         Assert.assertTrue(actions.isEmpty());
     }
 
     @Test
     public void parseActions_SingleAction() throws Exception {
-        List<Action> actions = DataParsing.toList("10|1.5|3.14|15", ReplayParser::parseAction);
+        List<Action> actions = StringDecode.toList("10|1.5|3.14|15", StringDecode::parseAction);
         Assert.assertEquals(1, actions.size());
 
         Action action = actions.get(0);
@@ -44,7 +47,7 @@ public class DataParsingTest {
 
     @Test
     public void parseActions_MultipleActions() throws Exception {
-        List<Action> actions = DataParsing.toList("10|1.5|3.14|15,5|120|120.1|10", ReplayParser::parseAction);
+        List<Action> actions = StringDecode.toList("10|1.5|3.14|15,5|120|120.1|10", StringDecode::parseAction);
         Assert.assertEquals(2, actions.size());
         Action action;
 

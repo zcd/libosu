@@ -1,4 +1,4 @@
-package Replay.Parse;
+package Replay.IO;
 
 import Util.Uleb128;
 

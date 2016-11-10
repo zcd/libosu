@@ -1,5 +1,6 @@
 package Util;
 
+import TestUtil.TestCategories;
 import com.pholser.junit.quickcheck.Property;
 import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
 import org.hamcrest.CoreMatchers;
@@ -7,14 +8,13 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-/**
- * Tests for Util.Uleb128
- */
+@Category(TestCategories.UnitTest.class)
 @RunWith(JUnitQuickcheck.class)
 public class Uleb128Test {
     @Test

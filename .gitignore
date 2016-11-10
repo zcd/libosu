@@ -1,3 +1,5 @@
 .idea/
+generated/
+generated_tests/
 out/
 osu.iml
