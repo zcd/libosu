@@ -92,6 +92,7 @@ public abstract class Replay {
 
         public abstract Builder setEvents(List<Action> events);
 
+        // TODO(zcd): https://github.com/google/auto/issues/277- implement child classes for other game modes
         public abstract Replay build();
     }
 }
