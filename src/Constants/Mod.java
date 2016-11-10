@@ -1,5 +1,8 @@
 package Constants;
 
+/**
+ * See <a href="https://osu.ppy.sh/wiki/Osr_(file_format)#Data%20Types">osu! replay file format reference.</a>
+ */
 public enum Mod implements BitmaskEnum {
     NONE(0),
     NO_FAIL(1 << 0),

@@ -5,9 +5,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
- * https://en.wikipedia.org/wiki/LEB128#Unsigned_LEB128
+ * See <a href="https://en.wikipedia.org/wiki/LEB128#Unsigned_LEB128">wiki</a> for details on encoding.
  *
- * Adopted from http://llvm.org/docs/doxygen/html/LEB128_8h_source.html
+ * Adopted from <a href="http://llvm.org/docs/doxygen/html/LEB128_8h_source.html">LLVM source</a>. This class assumes
+ * the maximum input value fits into a Java long type.
  */
 public final class Uleb128 {
     private final static int BITS_LONG = 64;
@@ -15,6 +16,16 @@ public final class Uleb128 {
     private final static int MASK_CONTINUE = 0x80;
     private final long value;
 
+    /**
+     * Reads a ULEB128 value from the input bytestream. This method does not close the stream when finished.
+     *
+     * @param bytes ULEB128-encoded long bytes.
+     * @return
+     * @throws IOException on any read error.
+     * @throws ArithmeticException if the encoding indicates that the input value is too large to fit into a Java long.
+     *                             This method will consume the input up to the maximum allowed ULEB128 encoding which
+     *                             fits into a long, even on error.
+     */
     public static Uleb128 fromByteStream(InputStream bytes) throws IOException {
         return new Uleb128(decode(bytes));
     }

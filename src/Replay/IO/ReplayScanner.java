@@ -10,6 +10,11 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DataFormatException;
 
+/**
+ * {@link java.util.Scanner}-like class which emits Java analogues to .osr data-types.
+ * <p>
+ * Attempting to retrieve data on EOF is an error in all cases.
+ */
 public final class ReplayScanner implements Closeable, AutoCloseable {
     private final InputStream replay;
 
@@ -41,6 +46,14 @@ public final class ReplayScanner implements Closeable, AutoCloseable {
         return Uleb128.fromByteStream(replay);
     }
 
+    /**
+     * Reads a string from the underlying stream.
+     *
+     * @return The next available string in the stream. If the stream begins with a null-byte, this method returns
+     *         {@code null}.
+     * @throws IOException
+     * @throws DataFormatException
+     */
     public String nextString() throws IOException, DataFormatException {
         byte indicator = nextByte();
         if (indicator == 0x00) {
@@ -55,9 +68,15 @@ public final class ReplayScanner implements Closeable, AutoCloseable {
         return new String(stringBytes, StandardCharsets.UTF_8);
     }
 
-    public void nextBytes(byte[] bytes) throws IOException {
-        int numBytesRead = replay.read(bytes);
-        if (numBytesRead == -1 || numBytesRead < bytes.length) {
+    /**
+     * Attempts to fill in the input byte array with data read from the underlying stream.
+     *
+     * @param buf
+     * @throws IOException if not enough bytes are available to fill the input buffer.
+     */
+    public void nextBytes(byte[] buf) throws IOException {
+        int numBytesRead = replay.read(buf);
+        if (numBytesRead == -1 || numBytesRead < buf.length) {
             throw new IOException("Unexpected EOF");
         }
     }
