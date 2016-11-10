@@ -14,7 +14,21 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Function;
 
-public final class StringDecode {
+
+/**
+ * Library for encoding/decoding String types as used in osu! Replay files.
+ *
+ * See <a href="https://osu.ppy.sh/wiki/Osr_(file_format)">reference page</a> for more detail.
+ */
+public final class DataStringCodec {
+    /**
+     * Decodes a list of values from a string.
+     *
+     * @param input the encoded string.
+     * @param parser function that parses values from the list elements.
+     * @param <E> type of the encoded elements.
+     * @return
+     */
     public static <E> List<E> toList(InputStream input, Function<String, E> parser) {
         try (Scanner scanner = new Scanner(input)) {
             return listFromScanner(parser, scanner);
@@ -25,12 +39,26 @@ public final class StringDecode {
         return toList(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)), parser);
     }
 
+    /**
+     * Decodes tuple values from a string.
+     *
+     * @param input the encoded string.
+     * @param parser function that parses the tuple value.
+     * @param <E> type of the encoded tuple.
+     * @return
+     */
     public static <E> E toTuple(String input, Function<Scanner, E> parser) {
         try (Scanner scanner = new Scanner(input).useDelimiter("[|]")) {
             return parser.apply(scanner);
         }
     }
 
+    /**
+     * Decodes a Replay.LifeBarSample tuple value from a string.
+     *
+     * @param input a string with a single LifeBarSample tuple encoding.
+     * @return the decoded tuple.
+     */
     public static LifeBarSample parseLifeBarSample(String input) {
         return toTuple(input, (Scanner scanner) -> {
             long u = scanner.nextLong();
@@ -39,6 +67,12 @@ public final class StringDecode {
         });
     }
 
+    /**
+     * Decodes a Replay.Action tuple value from a string.
+     *
+     * @param input a string with a single Action tuple encoding.
+     * @return the decoded tuple.
+     */
     public static Action parseAction(String input) {
         return toTuple(input, (Scanner scanner) -> {
             long millis = scanner.nextLong();

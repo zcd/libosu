@@ -61,13 +61,13 @@ public final class ReplayIO {
         builder.setMods(BitmaskEnum.fromMask(Mod.class, scanner.nextInteger()));
 
         // Replay data
-        builder.setLifebar(StringDecode.toList(scanner.nextString(), StringDecode::parseLifeBarSample));
+        builder.setLifebar(DataStringCodec.toList(scanner.nextString(), DataStringCodec::parseLifeBarSample));
         builder.setTimestamp(scanner.nextLong());
 
         byte[] replayBytes = new byte[scanner.nextInteger()];
         scanner.nextBytes(replayBytes);
         InputStream decompressed = new LZMACompressorInputStream(new ByteArrayInputStream(replayBytes));
-        builder.setEvents(StringDecode.toList(decompressed, StringDecode::parseAction));
+        builder.setEvents(DataStringCodec.toList(decompressed, DataStringCodec::parseAction));
 
         return builder.build();
     }

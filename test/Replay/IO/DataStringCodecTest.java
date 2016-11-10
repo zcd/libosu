@@ -15,12 +15,12 @@ import static Constants.KeyStroke.MOUSE1;
 import static Constants.KeyStroke.MOUSE2;
 
 @Category(TestCategories.UnitTest.class)
-public class StringDecodeTest {
+public class DataStringCodecTest {
     private static final double EPSILON = 0.001;
 
     @Test
     public void parseAction() throws Exception {
-        Action action = StringDecode.parseAction("10|1.5|3.14|15");
+        Action action = DataStringCodec.parseAction("10|1.5|3.14|15");
         Assert.assertEquals(10, action.getMillisSincePrevAction());
         Assert.assertEquals(1.5, action.getX(), EPSILON);
         Assert.assertEquals(3.14, action.getY(), EPSILON);
@@ -29,13 +29,13 @@ public class StringDecodeTest {
 
     @Test
     public void parseActions_Empty() throws Exception {
-        List<Action> actions = StringDecode.toList("", StringDecode::parseAction);
+        List<Action> actions = DataStringCodec.toList("", DataStringCodec::parseAction);
         Assert.assertTrue(actions.isEmpty());
     }
 
     @Test
     public void parseActions_SingleAction() throws Exception {
-        List<Action> actions = StringDecode.toList("10|1.5|3.14|15", StringDecode::parseAction);
+        List<Action> actions = DataStringCodec.toList("10|1.5|3.14|15", DataStringCodec::parseAction);
         Assert.assertEquals(1, actions.size());
 
         Action action = actions.get(0);
@@ -47,7 +47,7 @@ public class StringDecodeTest {
 
     @Test
     public void parseActions_MultipleActions() throws Exception {
-        List<Action> actions = StringDecode.toList("10|1.5|3.14|15,5|120|120.1|10", StringDecode::parseAction);
+        List<Action> actions = DataStringCodec.toList("10|1.5|3.14|15,5|120|120.1|10", DataStringCodec::parseAction);
         Assert.assertEquals(2, actions.size());
         Action action;
 
