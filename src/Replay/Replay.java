@@ -52,6 +52,8 @@ public abstract class Replay {
         return new AutoValue_Replay.Builder();
     }
 
+    public abstract Builder toBuilder();
+
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setGameMode(GameMode gameMode);
@@ -91,27 +93,5 @@ public abstract class Replay {
         public abstract Builder setEvents(List<Action> events);
 
         public abstract Replay build();
-
-        public static Builder fromReplay(Replay source) {
-            return new AutoValue_Replay.Builder()
-                    .setGameMode(source.gameMode())
-                    .setGameVersion(source.gameVersion())
-                    .setBeatmapHash(source.beatmapHash())
-                    .setTimestamp(source.timestamp())
-                    .setReplayHash(source.replayHash())
-                    .setPlayerName(source.playerName())
-                    .setMods(source.mods())
-                    .setTotalScore(source.totalScore())
-                    .setMaxCombo(source.maxCombo())
-                    .setIsPerfect(source.isPerfect())
-                    .setNum300(source.num300())
-                    .setNum100(source.num100())
-                    .setNum50(source.num50())
-                    .setNumGeki(source.numGeki())
-                    .setNumKatu(source.numKatu())
-                    .setNumMiss(source.numMiss())
-                    .setLifebar(source.lifebar())
-                    .setEvents(source.events());
-        }
     }
 }
