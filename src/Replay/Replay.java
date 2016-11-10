@@ -33,10 +33,25 @@ public class Replay {
     private final List<LifeBarSample> lifebar;
     private final List<Action> events;
 
-    Replay(GameMode gameMode, int gameVersion, String beatmapHash, long timestamp, String replayHash, String
-            playerName, EnumSet<Mod> mods, int totalScore, short maxCombo, boolean isPerfect, short num300, short
-            num100, short num50, short numGeki, short numKatu, short numMiss, List<LifeBarSample> lifebar,
-           List<Action> events) {
+    Replay(
+            GameMode gameMode,
+            int gameVersion,
+            String beatmapHash,
+            long timestamp,
+            String replayHash,
+            String playerName,
+            EnumSet<Mod> mods,
+            int totalScore,
+            short maxCombo,
+            boolean isPerfect,
+            short num300,
+            short num100,
+            short num50,
+            short numGeki,
+            short numKatu,
+            short numMiss,
+            List<LifeBarSample> lifebar,
+            List<Action> events) {
         this.gameMode = gameMode;
         this.gameVersion = gameVersion;
         this.beatmapHash = beatmapHash;
@@ -133,7 +148,6 @@ public class Replay {
         return new Builder();
     }
 
-    @SuppressWarnings("UnusedReturnValue")
     public static class Builder<T extends Builder> {
         private GameMode gameMode;
         private int gameVersion;
@@ -154,8 +168,8 @@ public class Replay {
         private List<LifeBarSample> lifebar;
         private List<Action> events;
 
-        public Replay.Builder setGameMode() {
-            this.gameMode = GameMode.STANDARD;
+        public Replay.Builder setGameMode(GameMode gameMode) {
+            this.gameMode = gameMode;
             return this;
         }
 
@@ -245,9 +259,47 @@ public class Replay {
         }
 
         public Replay build() {
-            // TODO(zcd): validation?
-            return new Replay(gameMode, gameVersion, beatmapHash, timestamp, replayHash, playerName, mods, totalScore,
-                    maxCombo, isPerfect, num300, num100, num50, numGeki, numKatu, numMiss, lifebar, events);
+            return new Replay(
+                    gameMode,
+                    gameVersion,
+                    beatmapHash,
+                    timestamp,
+                    replayHash,
+                    playerName,
+                    mods,
+                    totalScore,
+                    maxCombo,
+                    isPerfect,
+                    num300,
+                    num100,
+                    num50,
+                    numGeki,
+                    numKatu,
+                    numMiss,
+                    lifebar,
+                    events);
+        }
+
+        public static Builder fromReplay(Replay source) {
+            return new Builder()
+                    .setGameMode(source.getGameMode())
+                    .setGameVersion(source.getGameVersion())
+                    .setBeatmapHash(source.getBeatmapHash())
+                    .setTimestamp(source.getTimestamp())
+                    .setReplayHash(source.getReplayHash())
+                    .setPlayerName(source.getPlayerName())
+                    .setMods(source.getMods())
+                    .setTotalScore(source.getTotalScore())
+                    .setMaxCombo(source.getMaxCombo())
+                    .setIsPerfect(source.isPerfect())
+                    .setNum300(source.getNum300())
+                    .setNum100(source.getNum100())
+                    .setNum50(source.getNum50())
+                    .setNumGeki(source.getNumGeki())
+                    .setNumKatu(source.getNumKatu())
+                    .setNumMiss(source.getNumMiss())
+                    .setLifebar(source.getLifebar())
+                    .setEvents(source.getEvents());
         }
     }
 }
