@@ -62,26 +62,26 @@ public abstract class Replay {
 
         public abstract Replay build();
 
-//        public static Builder fromReplay(Replay source) {
-//            return new Replay.Builder()
-//                    .setGameMode(source.getGameMode())
-//                    .setGameVersion(source.getGameVersion())
-//                    .setBeatmapHash(source.getBeatmapHash())
-//                    .setTimestamp(source.getTimestamp())
-//                    .setReplayHash(source.getReplayHash())
-//                    .setPlayerName(source.getPlayerName())
-//                    .setMods(source.getMods())
-//                    .setTotalScore(source.getTotalScore())
-//                    .setMaxCombo(source.getMaxCombo())
-//                    .setIsPerfect(source.isPerfect())
-//                    .setNum300(source.getNum300())
-//                    .setNum100(source.getNum100())
-//                    .setNum50(source.getNum50())
-//                    .setNumGeki(source.getNumGeki())
-//                    .setNumKatu(source.getNumKatu())
-//                    .setNumMiss(source.getNumMiss())
-//                    .setLifebar(source.getLifebar())
-//                    .setEvents(source.getEvents());
-//        }
+        public static Builder fromReplay(Replay source) {
+            return new AutoValue_Replay.Builder()
+                    .setGameMode(source.gameMode())
+                    .setGameVersion(source.gameVersion())
+                    .setBeatmapHash(source.beatmapHash())
+                    .setTimestamp(source.timestamp())
+                    .setReplayHash(source.replayHash())
+                    .setPlayerName(source.playerName())
+                    .setMods(source.mods())
+                    .setTotalScore(source.totalScore())
+                    .setMaxCombo(source.maxCombo())
+                    .setIsPerfect(source.isPerfect())
+                    .setNum300(source.num300())
+                    .setNum100(source.num100())
+                    .setNum50(source.num50())
+                    .setNumGeki(source.numGeki())
+                    .setNumKatu(source.numKatu())
+                    .setNumMiss(source.numMiss())
+                    .setLifebar(source.lifebar())
+                    .setEvents(source.events());
+        }
     }
 }
