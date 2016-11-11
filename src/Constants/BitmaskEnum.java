@@ -1,18 +1,17 @@
 package Constants;
 
 import java.util.EnumSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * A helper interface for Enums that represent bitmask vectors.
  */
 public interface BitmaskEnum {
-    long getMask();
+    int getMask();
 
-    static <E extends Enum<E> & BitmaskEnum> EnumSet<E> fromMask(Class<E> enumType, long mask) {
-        EnumSet<E> values = EnumSet.noneOf(enumType);
-        values.addAll(
-                EnumSet.allOf(enumType).stream().filter(e -> (e.getMask() & mask) != 0).collect(Collectors.toList()));
-        return values;
+    static <E extends Enum<E> & BitmaskEnum> int toMask(EnumSet<E> collection) {
+        //noinspection RedundantCast - http://stackoverflow.com/a/34160332
+        return collection.stream().mapToInt((E e) -> ((BitmaskEnum) e).getMask()).reduce(0, (a, b) -> a | b);
     }
 }

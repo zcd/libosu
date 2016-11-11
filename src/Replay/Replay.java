@@ -46,7 +46,7 @@ public abstract class Replay {
 
     public abstract List<LifeBarSample> lifebar();
 
-    public abstract List<Action> events();
+    public abstract List<Moment> moments();
 
     public static Builder builder() {
         return new AutoValue_Replay.Builder();
@@ -90,7 +90,7 @@ public abstract class Replay {
 
         public abstract Builder setLifebar(List<LifeBarSample> lifebar);
 
-        public abstract Builder setEvents(List<Action> events);
+        public abstract Builder setMoments(List<Moment> moments);
 
         // TODO(zcd): https://github.com/google/auto/issues/277- implement child classes for other game modes
         public abstract Replay build();

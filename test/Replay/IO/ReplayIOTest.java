@@ -59,7 +59,7 @@ public class ReplayIOTest {
         Assert.assertEquals("jhlee0133", play.playerName());
         Assert.assertEquals(GameMode.MANIA, play.gameMode());
 
-        Assert.assertTrue(play.mods().equals(EnumSet.noneOf(Mod.class)));
+        Assert.assertTrue(play.mods().equals(EnumSet.of(Mod.NONE)));
         Assert.assertEquals(978993, play.totalScore());
         Assert.assertEquals(1577, play.maxCombo());
         Assert.assertFalse(play.isPerfect());

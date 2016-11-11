@@ -1,0 +1,24 @@
+package Replay;
+
+import Constants.KeyStroke;
+import com.google.auto.value.AutoValue;
+
+import java.util.EnumSet;
+
+/**
+ * A single event from the osu! replay file's replay data stream.
+ */
+@AutoValue
+public abstract class Moment {
+    public abstract long millisSincePrev();
+
+    public abstract float cursorX();
+
+    public abstract float cursorY();
+
+    public abstract EnumSet<KeyStroke> keys();
+
+    public static Moment create(long millisSincePrev, float cursorX, float cursorY, EnumSet<KeyStroke> keys) {
+        return new AutoValue_Moment(millisSincePrev, cursorX, cursorY, keys);
+    }
+}

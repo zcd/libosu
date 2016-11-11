@@ -1,6 +1,5 @@
 package Replay.IO;
 
-import Constants.BitmaskEnum;
 import Constants.GameMode;
 import Constants.Mod;
 import Replay.Replay;
@@ -66,7 +65,7 @@ public final class ReplayIO {
         builder.setTotalScore(scanner.nextInteger());
         builder.setMaxCombo(scanner.nextShort());
         builder.setIsPerfect(scanner.nextByte() == 1);
-        builder.setMods(BitmaskEnum.fromMask(Mod.class, scanner.nextInteger()));
+        builder.setMods(Mod.fromMask(scanner.nextInteger()));
 
         // Replay data
         builder.setLifebar(DataStringCodec.toList(scanner.nextString(), DataStringCodec::parseLifeBarSample));
@@ -75,7 +74,7 @@ public final class ReplayIO {
         byte[] replayBytes = new byte[scanner.nextInteger()];
         scanner.nextBytes(replayBytes);
         InputStream decompressed = new LZMACompressorInputStream(new ByteArrayInputStream(replayBytes));
-        builder.setEvents(DataStringCodec.toList(decompressed, DataStringCodec::parseAction));
+        builder.setMoments(DataStringCodec.toList(decompressed, DataStringCodec::parseMoment));
 
         return builder.build();
     }

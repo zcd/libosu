@@ -1,5 +1,8 @@
 package Constants;
 
+import java.util.EnumSet;
+import java.util.stream.Collectors;
+
 /**
  * See <a href="https://osu.ppy.sh/wiki/Osr_(file_format)#Data%20Types">osu! replay file format reference.</a>
  */
@@ -36,13 +39,25 @@ public enum Mod implements BitmaskEnum {
     KEY_2(1 << 27),
     KEY_3(1 << 28);
 
-    private final long mask;
+    private final int mask;
 
-    Mod(long mask) {
+    Mod(int mask) {
         this.mask = mask;
     }
 
-    public long getMask() {
+    public int getMask() {
         return mask;
+    }
+
+    public static EnumSet<Mod> fromMask(int mask) {
+        if (mask == 0) {
+            return EnumSet.of(NONE);
+        }
+
+        EnumSet<Mod> values = EnumSet.noneOf(Mod.class);
+        values.addAll(EnumSet.allOf(Mod.class).stream().filter(e -> (e.getMask() & mask) == e.getMask())
+                .collect(Collectors.toList()));
+        values.remove(NONE);
+        return values;
     }
 }

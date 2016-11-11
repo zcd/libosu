@@ -1,28 +1,17 @@
 package Replay;
 
+import com.google.auto.value.AutoValue;
+
 /**
  * A single lifebar tick.
  */
-public final class LifeBarSample {
-    private final long offsetMillis;
-    private final float lifeFraction;
+@AutoValue
+public abstract class LifeBarSample {
+    public abstract long offsetMillis();
 
-    /**
-     * Constructor.
-     *
-     * @param offsetMillis milliseconds since the start of the song
-     * @param lifeFraction fraction of life at current time
-     */
-    public LifeBarSample(long offsetMillis, float lifeFraction) {
-        this.offsetMillis = offsetMillis;
-        this.lifeFraction = lifeFraction;
-    }
+    public abstract float lifeFraction();
 
-    public long getOffsetMillis() {
-        return offsetMillis;
-    }
-
-    public float getLifeFraction() {
-        return lifeFraction;
+    public static LifeBarSample create(long offsetMillis, float lifeFraction) {
+        return new AutoValue_LifeBarSample(offsetMillis, lifeFraction);
     }
 }

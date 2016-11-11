@@ -2,7 +2,7 @@ package Replay.IO;
 
 import Constants.BitmaskEnum;
 import Constants.KeyStroke;
-import Replay.Action;
+import Replay.Moment;
 import Replay.LifeBarSample;
 import com.google.common.collect.ImmutableList;
 
@@ -17,16 +17,16 @@ import java.util.function.Function;
 
 /**
  * Library for encoding/decoding String types as used in osu! Replay files.
- *
+ * <p>
  * See <a href="https://osu.ppy.sh/wiki/Osr_(file_format)">reference page</a> for more detail.
  */
 public final class DataStringCodec {
     /**
      * Decodes a list of values from a string.
      *
-     * @param input the encoded string.
+     * @param input  the encoded string.
      * @param parser function that parses values from the list elements.
-     * @param <E> type of the encoded elements.
+     * @param <E>    type of the encoded elements.
      * @return
      */
     public static <E> List<E> toList(InputStream input, Function<String, E> parser) {
@@ -42,9 +42,9 @@ public final class DataStringCodec {
     /**
      * Decodes tuple values from a string.
      *
-     * @param input the encoded string.
+     * @param input  the encoded string.
      * @param parser function that parses the tuple value.
-     * @param <E> type of the encoded tuple.
+     * @param <E>    type of the encoded tuple.
      * @return
      */
     public static <E> E toTuple(String input, Function<Scanner, E> parser) {
@@ -63,25 +63,46 @@ public final class DataStringCodec {
         return toTuple(input, (Scanner scanner) -> {
             long u = scanner.nextLong();
             float v = scanner.nextFloat();
-            return new LifeBarSample(u, v);
+            return LifeBarSample.create(u, v);
         });
     }
 
+    public static String encodeLifeBarSample(LifeBarSample sample) {
+        return String.format("%d|%f", sample.offsetMillis(), sample.lifeFraction());
+    }
+
     /**
-     * Decodes a Replay.Action tuple value from a string.
+     * Decodes a Replay.Moment tuple value from a string.
      *
-     * @param input a string with a single Action tuple encoding.
+     * @param input a string with a single Moment tuple encoding.
      * @return the decoded tuple.
      */
-    public static Action parseAction(String input) {
+    public static Moment parseMoment(String input) {
         return toTuple(input, (Scanner scanner) -> {
             long millis = scanner.nextLong();
             float x = scanner.nextFloat();
             float y = scanner.nextFloat();
-            EnumSet<KeyStroke> keys = BitmaskEnum.fromMask(KeyStroke.class, scanner.nextInt());
+            EnumSet<KeyStroke> keys = KeyStroke.fromMask(scanner.nextInt());
 
-            return new Action(millis, x, y, keys);
+            return Moment.create(millis, x, y, keys);
         });
+    }
+
+    /**
+     * Encodes a Replay.Moment tuple value into a string.
+     * <p>
+     * Preserves four decimal places in the x and y coordinate values.
+     *
+     * @param sample
+     * @return
+     */
+    public static String encodeMoment(Moment sample) {
+        return String.format(
+                "%d|%.4f|%.4f|%d",
+                sample.millisSincePrev(),
+                sample.cursorX(),
+                sample.cursorY(),
+                BitmaskEnum.toMask(sample.keys()));
     }
 
     private static <E> List<E> listFromScanner(Function<String, E> parser, Scanner scanner) {
