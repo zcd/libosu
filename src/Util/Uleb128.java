@@ -42,6 +42,8 @@ public final class Uleb128 {
         return encode(value);
     }
 
+    public String toString() { return Long.toString(value); }
+
     private Uleb128(long value) {
         this.value = value;
     }

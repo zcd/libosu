@@ -1,7 +1,11 @@
 package Util;
 
 import TestUtil.TestCategories;
+import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.Property;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
 import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -13,6 +17,7 @@ import org.junit.runner.RunWith;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 @Category(TestCategories.UnitTest.class)
 @RunWith(JUnitQuickcheck.class)
@@ -67,5 +72,41 @@ public class Uleb128Test {
         Assume.assumeThat(value, Matchers.greaterThan(0L));
         Assert.assertEquals(
                 value, Uleb128.fromByteStream(new ByteArrayInputStream(Uleb128.fromLong(value).asBytes())).asLong());
+    }
+
+    @Property
+    public void encodeFromDecode(@From(Uleb128Generator.class) byte[] bytes) throws Exception {
+        byte[] recycled = Uleb128.fromLong(
+                Uleb128.fromByteStream(new ByteArrayInputStream(bytes)).asLong()).asBytes();
+        if (!Arrays.equals(bytes, recycled)) {
+            System.out.print(">>>");
+            prettyPrintBuffer(bytes);
+            System.out.print("\n<<<");
+            prettyPrintBuffer(recycled);
+        }
+        Assert.assertArrayEquals(bytes, recycled);
+    }
+
+    protected static class Uleb128Generator extends Generator<byte[]> {
+        public Uleb128Generator() {
+            super(byte[].class);
+        }
+
+        @Override
+        public byte[] generate(SourceOfRandomness random, GenerationStatus status) {
+            byte[] randomBuf = random.nextBytes(random.nextInt(0, 8));
+            byte[] buf = new byte[randomBuf.length + 1];
+            for (int i = 0; i < randomBuf.length; i++) {
+                buf[i] = (byte) (randomBuf[i] | 0x80);
+            }
+            buf[buf.length - 1] = random.nextByte((byte) 1, Byte.MAX_VALUE);
+            return buf;
+        }
+    }
+
+    private void prettyPrintBuffer(byte[] buf) {
+        for (int i = 0; i < buf.length; i++) {
+            System.out.print(" " + String.format("%8s", Integer.toBinaryString(buf[i] & 0xff)).replace(' ', '0'));
+        }
     }
 }
