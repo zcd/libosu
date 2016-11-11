@@ -1,6 +1,5 @@
 package Replay.IO;
 
-import Constants.BitmaskEnum;
 import Constants.GameMode;
 import Constants.Mod;
 import Replay.Replay;
