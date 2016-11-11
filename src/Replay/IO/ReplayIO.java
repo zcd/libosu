@@ -1,5 +1,6 @@
 package Replay.IO;
 
+import Constants.BitmaskEnum;
 import Constants.GameMode;
 import Constants.Mod;
 import Replay.Replay;
@@ -76,6 +77,7 @@ public final class ReplayIO {
         InputStream decompressed = new LZMACompressorInputStream(new ByteArrayInputStream(replayBytes));
         builder.setMoments(DataStringCodec.toList(decompressed, DataStringCodec::parseMoment));
 
+        builder.setUnknown(scanner.nextLong());
         return builder.build();
     }
 
