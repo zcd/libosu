@@ -25,7 +25,7 @@ import static Constants.KeyStroke.MOUSE2;
 @RunWith(JUnitQuickcheck.class)
 @Category(TestCategories.UnitTest.class)
 public class DataStringCodecTest {
-    private static final double EPSILON = 1e-4;
+    static final double EPSILON = 1e-4;
 
     private static float roundFloat(float value, int decimalPlaces) {
         double offset = Math.pow(10, decimalPlaces);

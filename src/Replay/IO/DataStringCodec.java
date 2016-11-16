@@ -13,6 +13,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 /**
@@ -37,6 +38,13 @@ public final class DataStringCodec {
 
     public static <E> List<E> toList(String input, Function<String, E> parser) {
         return toList(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)), parser);
+    }
+
+    public static <E> String toEncodedString(List<E> items, Function<E, String> encoder) {
+        return items
+                .stream()
+                .map(encoder)
+                .collect(Collectors.joining(","));
     }
 
     /**

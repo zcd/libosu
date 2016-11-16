@@ -9,7 +9,6 @@ import org.junit.experimental.categories.Category;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.DataFormatException;
 
 @SuppressWarnings({"PointlessArithmeticExpression", "PointlessBitwiseExpression"})
 @Category(TestCategories.UnitTest.class)
@@ -266,7 +265,7 @@ public class ReplayScannerTest {
     @Test
     public void nextString_MalformedData() throws Exception {
         try (ReplayScanner scanner = new ReplayScanner(buildTestByteStream(new int[]{0xde, 0xad, 0xbe, 0xef}))) {
-            TestUtil.assertThrows(scanner::nextString, DataFormatException.class,
+            TestUtil.assertThrows(scanner::nextString, IOException.class,
                     TestUtil.exceptionMessageMatches("Unrecognized indicator byte: .*"));
         }
     }

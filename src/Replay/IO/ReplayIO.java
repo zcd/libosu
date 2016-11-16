@@ -1,26 +1,31 @@
 package Replay.IO;
 
+import Constants.BitmaskEnum;
 import Constants.GameMode;
 import Constants.Mod;
+import Replay.Metadata;
 import Replay.Replay;
-import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
+import lzma.sdk.lzma.Decoder;
+import lzma.sdk.lzma.Encoder;
+import lzma.streams.LzmaInputStream;
+import lzma.streams.LzmaOutputStream;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.zip.DataFormatException;
+import java.nio.charset.StandardCharsets;
 
 public final class ReplayIO {
     /**
      * Parses a {@link Replay} instance from the input data.
      *
      * @param source an {@link InputStream} containing an entire osu! Replay file.
-     * @return
-     * @throws IOException
-     * @throws DataFormatException
+     * @return a parsed {@link Replay} instance.
+     * @throws IOException if an exception occurs when reading the stream.
      */
-    public static Replay read(InputStream source) throws IOException, DataFormatException {
+    public static Replay read(InputStream source) throws IOException {
         ReplayScanner scanner = new ReplayScanner(source);
         GameMode mode;
         byte modeByte = scanner.nextByte();
@@ -40,44 +45,83 @@ public final class ReplayIO {
             default:
                 throw new IllegalArgumentException("Unrecognized game mode byte: " + modeByte);
         }
-        return parse(Replay.builder().setGameMode(mode), scanner);
+        return parse(mode, scanner);
     }
 
+    /**
+     * Writes a {@link Replay} into the sink.
+     *
+     * @param source {@link Replay} instance to write.
+     * @param sink   output stream to write to.
+     * @throws IOException if an error occurs on writing to the stream.
+     */
+    public static void write(Replay source, OutputStream sink) throws IOException {
+        ReplayWriter writer = new ReplayWriter(sink);
 
-    public static void write(Replay source, OutputStream sink) {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        Metadata metadata = source.metadata();
+        writer.writeByte((byte) metadata.gameMode().ordinal());
+        writer.writeInt(metadata.gameVersion());
+        writer.writeString(metadata.beatmapHash());
+        writer.writeString(metadata.playerName());
+        writer.writeString(metadata.replayHash());
+        writer.writeShort(metadata.num300());
+        writer.writeShort(metadata.num100());
+        writer.writeShort(metadata.num50());
+        writer.writeShort(metadata.numGeki());
+        writer.writeShort(metadata.numKatu());
+        writer.writeShort(metadata.numMiss());
+        writer.writeInt(metadata.totalScore());
+        writer.writeShort(metadata.maxCombo());
+        writer.writeByte((byte) (metadata.isPerfect() ? 1 : 0));
+        writer.writeInt(BitmaskEnum.toMask(metadata.mods()));
+
+        writer.writeString(DataStringCodec.toEncodedString(source.lifebar(), DataStringCodec::encodeLifeBarSample));
+        writer.writeLong(metadata.timestamp());
+
+        byte[] replayData = compress(DataStringCodec.toEncodedString(source.moments(), DataStringCodec::encodeMoment));
+        writer.writeInt(replayData.length);
+        writer.write(replayData);
+        writer.writeLong(source.unknown());
     }
 
-    private static Replay parse(Replay.Builder builder, ReplayScanner scanner) throws IOException, DataFormatException {
-        // Game Metadata
-        builder.setGameVersion(scanner.nextInteger());
-        builder.setBeatmapHash(scanner.nextString());
+    private static byte[] compress(String s) throws IOException {
+        ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
+        try (OutputStream zip = new LzmaOutputStream.Builder(outBuf).build()) {
+            zip.write(s.getBytes());
+        }
+        return outBuf.toByteArray();
+    }
 
-        // Replay Metadata
-        builder.setPlayerName(scanner.nextString());
-        builder.setReplayHash(scanner.nextString());  // Possible to validate the replay file?
-        builder.setNum300(scanner.nextShort());
-        builder.setNum100(scanner.nextShort());
-        builder.setNum50(scanner.nextShort());
-        builder.setNumGeki(scanner.nextShort());
-        builder.setNumKatu(scanner.nextShort());
-        builder.setNumMiss(scanner.nextShort());
-        builder.setTotalScore(scanner.nextInteger());
-        builder.setMaxCombo(scanner.nextShort());
-        builder.setIsPerfect(scanner.nextByte() == 1);
-        builder.setMods(Mod.fromMask(scanner.nextInteger()));
+    private static Replay parse(GameMode mode, ReplayScanner scanner) throws IOException {
+        Replay.Builder replay = Replay.builder();
+        Metadata.Builder metadata = Metadata.builder();
 
-        // Replay data
-        builder.setLifebar(DataStringCodec.toList(scanner.nextString(), DataStringCodec::parseLifeBarSample));
-        builder.setTimestamp(scanner.nextLong());
+        metadata.setGameMode(mode);
+        metadata.setGameVersion(scanner.nextInteger());
+        metadata.setBeatmapHash(scanner.nextString());
+        metadata.setPlayerName(scanner.nextString());
+        metadata.setReplayHash(scanner.nextString());  // Possible to validate the replay file?
+        metadata.setNum300(scanner.nextShort());
+        metadata.setNum100(scanner.nextShort());
+        metadata.setNum50(scanner.nextShort());
+        metadata.setNumGeki(scanner.nextShort());
+        metadata.setNumKatu(scanner.nextShort());
+        metadata.setNumMiss(scanner.nextShort());
+        metadata.setTotalScore(scanner.nextInteger());
+        metadata.setMaxCombo(scanner.nextShort());
+        metadata.setIsPerfect(scanner.nextByte() == 1);
+        metadata.setMods(Mod.fromMask(scanner.nextInteger()));
+
+        replay.setLifebar(DataStringCodec.toList(scanner.nextString(), DataStringCodec::parseLifeBarSample));
+        metadata.setTimestamp(scanner.nextLong());
 
         byte[] replayBytes = new byte[scanner.nextInteger()];
         scanner.nextBytes(replayBytes);
-        InputStream decompressed = new LZMACompressorInputStream(new ByteArrayInputStream(replayBytes));
-        builder.setMoments(DataStringCodec.toList(decompressed, DataStringCodec::parseMoment));
+        InputStream decompressed = new LzmaInputStream(new ByteArrayInputStream(replayBytes), new Decoder());
+        replay.setMoments(DataStringCodec.toList(decompressed, DataStringCodec::parseMoment));
+        replay.setUnknown(scanner.nextLong());
 
-        builder.setUnknown(scanner.nextLong());
-        return builder.build();
+        return replay.setMetadata(metadata.build()).build();
     }
 
 }

@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.DataFormatException;
 
 /**
  * {@link java.util.Scanner}-like class which emits Java analogues to .osr data-types.
@@ -52,14 +51,13 @@ public final class ReplayScanner implements Closeable, AutoCloseable {
      * @return The next available string in the stream. If the stream begins with a null-byte, this method returns
      *         {@code null}.
      * @throws IOException
-     * @throws DataFormatException
      */
-    public String nextString() throws IOException, DataFormatException {
+    public String nextString() throws IOException {
         byte indicator = nextByte();
         if (indicator == 0x00) {
             return null;
         } else if (indicator != 0x0b) {
-            throw new DataFormatException("Unrecognized indicator byte: " + Integer.toHexString(indicator));
+            throw new IOException("Unrecognized indicator byte: " + Integer.toHexString(indicator));
         }
 
         Uleb128 stringLength = nextULEB128();
