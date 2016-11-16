@@ -1,8 +1,8 @@
 package Replay.IO;
 
 import Constants.KeyStroke;
-import Replay.Moment;
 import Replay.LifeBarSample;
+import Replay.Moment;
 import TestUtil.TestCategories;
 import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.Property;

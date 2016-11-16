@@ -87,6 +87,12 @@ public class Uleb128Test {
         Assert.assertArrayEquals(bytes, recycled);
     }
 
+    private void prettyPrintBuffer(byte[] buf) {
+        for (byte aBuf : buf) {
+            System.out.print(" " + String.format("%8s", Integer.toBinaryString(aBuf & 0xff)).replace(' ', '0'));
+        }
+    }
+
     protected static class Uleb128Generator extends Generator<byte[]> {
         public Uleb128Generator() {
             super(byte[].class);
@@ -101,12 +107,6 @@ public class Uleb128Test {
             }
             buf[buf.length - 1] = random.nextByte((byte) 1, Byte.MAX_VALUE);
             return buf;
-        }
-    }
-
-    private void prettyPrintBuffer(byte[] buf) {
-        for (int i = 0; i < buf.length; i++) {
-            System.out.print(" " + String.format("%8s", Integer.toBinaryString(buf[i] & 0xff)).replace(' ', '0'));
         }
     }
 }

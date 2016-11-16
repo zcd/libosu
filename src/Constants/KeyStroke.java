@@ -17,10 +17,6 @@ public enum KeyStroke implements BitmaskEnum {
         this.mask = mask;
     }
 
-    public int getMask() {
-        return mask;
-    }
-
     public static EnumSet<KeyStroke> fromMask(int mask) {
         EnumSet<KeyStroke> keys = EnumSet.noneOf(KeyStroke.class);
         if ((mask & KEY1.getMask()) == KEY1.getMask()) {
@@ -34,5 +30,9 @@ public enum KeyStroke implements BitmaskEnum {
             keys.add(MOUSE2);
         }
         return keys;
+    }
+
+    public int getMask() {
+        return mask;
     }
 }

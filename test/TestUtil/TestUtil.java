@@ -18,6 +18,9 @@ public class TestUtil {
         }
     };
 
+    private TestUtil() {
+    }
+
     public static void assertThrows(CheckedFunction fn, Class<? extends Exception> exceptionType) throws Exception {
         assertThrows(fn, exceptionType, ANY_MATCHER);
     }
@@ -53,8 +56,5 @@ public class TestUtil {
     @FunctionalInterface
     public interface CheckedFunction {
         void apply() throws Exception;
-    }
-
-    private TestUtil() {
     }
 }

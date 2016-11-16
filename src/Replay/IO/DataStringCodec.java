@@ -2,8 +2,8 @@ package Replay.IO;
 
 import Constants.BitmaskEnum;
 import Constants.KeyStroke;
-import Replay.Moment;
 import Replay.LifeBarSample;
+import Replay.Moment;
 import com.google.common.collect.ImmutableList;
 
 import java.io.ByteArrayInputStream;
@@ -28,7 +28,7 @@ public final class DataStringCodec {
      * @param input  the encoded string.
      * @param parser function that parses values from the list elements.
      * @param <E>    type of the encoded elements.
-     * @return
+     * @return list of parsed values.
      */
     public static <E> List<E> toList(InputStream input, Function<String, E> parser) {
         try (Scanner scanner = new Scanner(input)) {
@@ -40,6 +40,14 @@ public final class DataStringCodec {
         return toList(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)), parser);
     }
 
+    /**
+     * Encodes a list of values to a osu! Replay string.
+     *
+     * @param items   list of items to encode.
+     * @param encoder function to turn the item into a String.
+     * @param <E>     type of the list items.
+     * @return a osu! Replay string encoding of the items list.
+     */
     public static <E> String toEncodedString(List<E> items, Function<E, String> encoder) {
         return items
                 .stream()
@@ -53,7 +61,7 @@ public final class DataStringCodec {
      * @param input  the encoded string.
      * @param parser function that parses the tuple value.
      * @param <E>    type of the encoded tuple.
-     * @return
+     * @return a parsed tuple from the encoded string.
      */
     public static <E> E toTuple(String input, Function<Scanner, E> parser) {
         try (Scanner scanner = new Scanner(input).useDelimiter("[|]")) {
@@ -75,6 +83,14 @@ public final class DataStringCodec {
         });
     }
 
+    /**
+     * Encodes a Replay.LifeBarSample tuple value into a string.
+     * <p>
+     * Preserves four decimal places in the x and y coordinate values.
+     *
+     * @param sample the lifebar sample instance to encode.
+     * @return the string representation of the {@link LifeBarSample}
+     */
     public static String encodeLifeBarSample(LifeBarSample sample) {
         return String.format("%d|%f", sample.offsetMillis(), sample.lifeFraction());
     }
@@ -101,16 +117,16 @@ public final class DataStringCodec {
      * <p>
      * Preserves four decimal places in the x and y coordinate values.
      *
-     * @param sample
-     * @return
+     * @param moment the moment instance to encode.
+     * @return the string representation of the {@link Moment}
      */
-    public static String encodeMoment(Moment sample) {
+    public static String encodeMoment(Moment moment) {
         return String.format(
                 "%d|%.4f|%.4f|%d",
-                sample.millisSincePrev(),
-                sample.cursorX(),
-                sample.cursorY(),
-                BitmaskEnum.toMask(sample.keys()));
+                moment.millisSincePrev(),
+                moment.cursorX(),
+                moment.cursorY(),
+                BitmaskEnum.toMask(moment.keys()));
     }
 
     private static <E> List<E> listFromScanner(Function<String, E> parser, Scanner scanner) {

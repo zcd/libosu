@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  * See <a href="https://en.wikipedia.org/wiki/LEB128#Unsigned_LEB128">wiki</a> for details on encoding.
- *
+ * <p>
  * Adopted from <a href="http://llvm.org/docs/doxygen/html/LEB128_8h_source.html">LLVM source</a>. This class assumes
  * the maximum input value fits into a Java long type.
  */
@@ -16,12 +16,16 @@ public final class Uleb128 {
     private final static int MASK_CONTINUE = 0x80;
     private final long value;
 
+    private Uleb128(long value) {
+        this.value = value;
+    }
+
     /**
      * Reads a ULEB128 value from the input bytestream. This method does not close the stream when finished.
      *
      * @param bytes ULEB128-encoded long bytes.
-     * @return
-     * @throws IOException on any read error.
+     * @return a Uleb128 instance representing the byte sequence.
+     * @throws IOException         on any read error.
      * @throws ArithmeticException if the encoding indicates that the input value is too large to fit into a Java long.
      *                             This method will consume the input up to the maximum allowed ULEB128 encoding which
      *                             fits into a long, even on error.
@@ -32,20 +36,6 @@ public final class Uleb128 {
 
     public static Uleb128 fromLong(long value) {
         return new Uleb128(value);
-    }
-
-    public long asLong() {
-        return value;
-    }
-
-    public byte[] asBytes() {
-        return encode(value);
-    }
-
-    public String toString() { return Long.toString(value); }
-
-    private Uleb128(long value) {
-        this.value = value;
     }
 
     private static long decode(InputStream bytes) throws IOException {
@@ -77,12 +67,24 @@ public final class Uleb128 {
                 b |= MASK_CONTINUE;
             }
             bytes.add(b);
-        } while(value != 0);
+        } while (value != 0);
 
         byte[] ret = new byte[bytes.size()];
         for (int i = 0; i < bytes.size(); i++) {
             ret[i] = bytes.get(i);
         }
         return ret;
+    }
+
+    public long asLong() {
+        return value;
+    }
+
+    public byte[] asBytes() {
+        return encode(value);
+    }
+
+    public String toString() {
+        return Long.toString(value);
     }
 }

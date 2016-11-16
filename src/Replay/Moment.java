@@ -10,6 +10,10 @@ import java.util.EnumSet;
  */
 @AutoValue
 public abstract class Moment {
+    public static Moment create(long millisSincePrev, float cursorX, float cursorY, EnumSet<KeyStroke> keys) {
+        return new AutoValue_Moment(millisSincePrev, cursorX, cursorY, keys);
+    }
+
     public abstract long millisSincePrev();
 
     public abstract float cursorX();
@@ -17,8 +21,4 @@ public abstract class Moment {
     public abstract float cursorY();
 
     public abstract EnumSet<KeyStroke> keys();
-
-    public static Moment create(long millisSincePrev, float cursorX, float cursorY, EnumSet<KeyStroke> keys) {
-        return new AutoValue_Moment(millisSincePrev, cursorX, cursorY, keys);
-    }
 }

@@ -45,10 +45,6 @@ public enum Mod implements BitmaskEnum {
         this.mask = mask;
     }
 
-    public int getMask() {
-        return mask;
-    }
-
     public static EnumSet<Mod> fromMask(int mask) {
         if (mask == 0) {
             return EnumSet.of(NONE);
@@ -59,5 +55,9 @@ public enum Mod implements BitmaskEnum {
                 .collect(Collectors.toList()));
         values.remove(NONE);
         return values;
+    }
+
+    public int getMask() {
+        return mask;
     }
 }

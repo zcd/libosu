@@ -49,8 +49,8 @@ public final class ReplayScanner implements Closeable, AutoCloseable {
      * Reads a string from the underlying stream.
      *
      * @return The next available string in the stream. If the stream begins with a null-byte, this method returns
-     *         {@code null}.
-     * @throws IOException
+     * {@code null}.
+     * @throws IOException if the bytes do not form a valid String.
      */
     public String nextString() throws IOException {
         byte indicator = nextByte();
@@ -69,7 +69,7 @@ public final class ReplayScanner implements Closeable, AutoCloseable {
     /**
      * Attempts to fill in the input byte array with data read from the underlying stream.
      *
-     * @param buf
+     * @param buf the byte buffer to fill.
      * @throws IOException if not enough bytes are available to fill the input buffer.
      */
     public void nextBytes(byte[] buf) throws IOException {

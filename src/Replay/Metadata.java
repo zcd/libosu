@@ -8,6 +8,10 @@ import java.util.EnumSet;
 
 @AutoValue
 public abstract class Metadata {
+    public static Builder builder() {
+        return new AutoValue_Metadata.Builder();
+    }
+
     public abstract GameMode gameMode();
 
     public abstract int gameVersion();
@@ -39,10 +43,6 @@ public abstract class Metadata {
     public abstract short numKatu();
 
     public abstract short numMiss();
-
-    public static Builder builder() {
-        return new AutoValue_Metadata.Builder();
-    }
 
     @AutoValue.Builder
     public abstract static class Builder {

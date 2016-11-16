@@ -9,6 +9,10 @@ import java.util.List;
  */
 @AutoValue
 public abstract class Replay {
+    public static Builder builder() {
+        return new AutoValue_Replay.Builder();
+    }
+
     public abstract Metadata metadata();
 
     public abstract List<LifeBarSample> lifebar();
@@ -16,10 +20,6 @@ public abstract class Replay {
     public abstract List<Moment> moments();
 
     public abstract long unknown();
-
-    public static Builder builder() {
-        return new AutoValue_Replay.Builder();
-    }
 
     public abstract Builder toBuilder();
 

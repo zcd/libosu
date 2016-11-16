@@ -6,7 +6,6 @@ import Constants.Mod;
 import Replay.Metadata;
 import Replay.Replay;
 import lzma.sdk.lzma.Decoder;
-import lzma.sdk.lzma.Encoder;
 import lzma.streams.LzmaInputStream;
 import lzma.streams.LzmaOutputStream;
 
@@ -15,7 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 public final class ReplayIO {
     /**
