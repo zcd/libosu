@@ -19,6 +19,7 @@ ReplayIO.write(play, out);
 ```
 
 ## Built With
+* Java 1.8
 * [Maven](https://maven.apache.org/) - Dependency Management
 
 ## License
