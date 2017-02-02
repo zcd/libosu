@@ -2,7 +2,9 @@ package com.zerocooldown.libosu.replay.io;
 
 import com.zerocooldown.libosu.constants.GameMode;
 import com.zerocooldown.libosu.constants.Mod;
+import com.zerocooldown.libosu.replay.Metadata;
 import com.zerocooldown.libosu.replay.Moment;
+import com.zerocooldown.libosu.replay.Replay;
 import com.zerocooldown.libosu.testutil.TestCategories;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,9 +22,9 @@ public class ReplayIOTest {
 
     @Test
     public void read_FreedomDiveHDHR() throws Exception {
-        com.zerocooldown.libosu.replay.Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
+        Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
                 "replays/cookiezi_freedomdive_hdhr.osr"));
-        com.zerocooldown.libosu.replay.Metadata metadata = play.metadata();
+        Metadata metadata = play.metadata();
         Assert.assertEquals("Cookiezi", metadata.playerName());
         Assert.assertEquals(GameMode.STANDARD, metadata.gameMode());
 
@@ -41,9 +43,9 @@ public class ReplayIOTest {
 
     @Test
     public void read_BlueZenithChoke() throws Exception {
-        com.zerocooldown.libosu.replay.Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
+        Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
                 "replays/cookiezi_bluezenith_hr.osr"));
-        com.zerocooldown.libosu.replay.Metadata metadata = play.metadata();
+        Metadata metadata = play.metadata();
         Assert.assertEquals("Cookiezi", metadata.playerName());
         Assert.assertEquals(GameMode.STANDARD, metadata.gameMode());
 
@@ -62,9 +64,9 @@ public class ReplayIOTest {
 
     @Test
     public void read_Maniera() throws Exception {
-        com.zerocooldown.libosu.replay.Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
+        Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
                 "replays/jhlee0133_maniera.osr"));
-        com.zerocooldown.libosu.replay.Metadata metadata = play.metadata();
+        Metadata metadata = play.metadata();
         Assert.assertEquals("jhlee0133", metadata.playerName());
         Assert.assertEquals(GameMode.MANIA, metadata.gameMode());
 
@@ -83,12 +85,12 @@ public class ReplayIOTest {
 
     @Test
     public void readWrite_FreedomDiveHDHR() throws Exception {
-        com.zerocooldown.libosu.replay.Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
+        Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
                 "replays/cookiezi_freedomdive_hdhr.osr"));
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReplayIO.write(play, out);
-        com.zerocooldown.libosu.replay.Replay reparsed = ReplayIO.read(new ByteArrayInputStream(out.toByteArray()));
+        Replay reparsed = ReplayIO.read(new ByteArrayInputStream(out.toByteArray()));
 
         Assert.assertEquals(play.metadata(), reparsed.metadata());
         assertMomentsSimilar(play.moments(), reparsed.moments());
