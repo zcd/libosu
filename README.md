@@ -1,1 +1,2 @@
-osu! libraries in Java.
+# libosu
+osu! libraries for the JVM.
