@@ -3,6 +3,7 @@ package com.zerocooldown.libosu.beatmap.section;
 import com.google.auto.value.AutoValue;
 
 import java.util.List;
+import java.util.Optional;
 
 @AutoValue
 public abstract class Metadata {
@@ -12,11 +13,11 @@ public abstract class Metadata {
 
     public abstract String title();
 
-    public abstract String titleUnicode();
+    public abstract Optional<String> titleUnicode();
 
     public abstract String artist();
 
-    public abstract String artistUnicode();
+    public abstract Optional<String> artistUnicode();
 
     public abstract String creator();
 
@@ -35,11 +36,11 @@ public abstract class Metadata {
 
         public abstract Builder title(String title);
 
-        public abstract Builder titleUnicode(String titleUnicode);
+        public abstract Builder titleUnicode(Optional<String> titleUnicode);
 
         public abstract Builder artist(String artist);
 
-        public abstract Builder artistUnicode(String artistUnicode);
+        public abstract Builder artistUnicode(Optional<String> artistUnicode);
 
         public abstract Builder creator(String creator);
 

@@ -2,13 +2,15 @@ package com.zerocooldown.libosu.beatmap.section;
 
 import com.google.auto.value.AutoValue;
 
+import java.util.List;
+
 @AutoValue
 public abstract class Editor {
     public static Builder builder() {
         return new AutoValue_Editor.Builder();
     }
 
-    public abstract int bookmarks();
+    public abstract List<Integer> bookmarks();
 
     public abstract float distanceSpacing();
 
@@ -16,12 +18,12 @@ public abstract class Editor {
 
     public abstract int gridSize();
 
-    public abstract int timelineZoom();
+    public abstract float timelineZoom();
 
     @AutoValue.Builder
     public static abstract class Builder {
 
-        public abstract Builder bookmarks(int bookmarks);
+        public abstract Builder bookmarks(List<Integer> bookmarks);
 
         public abstract Builder distanceSpacing(float distanceSpacing);
 
@@ -29,7 +31,7 @@ public abstract class Editor {
 
         public abstract Builder gridSize(int gridSize);
 
-        public abstract Builder timelineZoom(int timelineZoom);
+        public abstract Builder timelineZoom(float timelineZoom);
 
         public abstract Editor build();
     }

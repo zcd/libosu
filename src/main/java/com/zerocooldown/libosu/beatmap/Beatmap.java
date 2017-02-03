@@ -1,17 +1,21 @@
 package com.zerocooldown.libosu.beatmap;
 
-import com.zerocooldown.libosu.beatmap.section.Colours;
+import com.google.auto.value.AutoValue;
+import com.zerocooldown.libosu.beatmap.datatypes.Colour;
+import com.zerocooldown.libosu.beatmap.datatypes.TimingPoint;
 import com.zerocooldown.libosu.beatmap.section.Difficulty;
 import com.zerocooldown.libosu.beatmap.section.Editor;
 import com.zerocooldown.libosu.beatmap.section.Events;
 import com.zerocooldown.libosu.beatmap.section.General;
-import com.zerocooldown.libosu.beatmap.section.HitObjects;
 import com.zerocooldown.libosu.beatmap.section.Metadata;
-import com.zerocooldown.libosu.beatmap.section.TimingPoints;
-import com.google.auto.value.AutoValue;
+
+import java.util.List;
+import java.util.Map;
 
 @AutoValue
 public abstract class Beatmap {
+    public abstract String osuFormatVersion();
+
     public abstract General general();
 
     public abstract Editor editor();
@@ -22,11 +26,12 @@ public abstract class Beatmap {
 
     public abstract Events events();
 
-    public abstract TimingPoints timingPoints();
+    public abstract List<TimingPoint> timingPoints();
 
-    public abstract Colours colours();
+    public abstract Map<Integer, Colour> colours();
 
-    public abstract HitObjects hitObjects();
+    // TODO(zcd): String -> HitObject
+    public abstract List<String> hitObjects();
 
     public static Builder builder() {
         return new AutoValue_Beatmap.Builder();
@@ -34,6 +39,8 @@ public abstract class Beatmap {
 
     @AutoValue.Builder
     public abstract static class Builder {
+        public abstract Builder osuFormatVersion(String osuFormatVersion);
+
         public abstract Builder general(General general);
 
         public abstract Builder editor(Editor editor);
@@ -44,11 +51,11 @@ public abstract class Beatmap {
 
         public abstract Builder events(Events events);
 
-        public abstract Builder timingPoints(TimingPoints timingPoints);
+        public abstract Builder timingPoints(List<TimingPoint> timingPoints);
 
-        public abstract Builder colours(Colours colours);
+        public abstract Builder colours(Map<Integer, Colour> colours);
 
-        public abstract Builder hitObjects(HitObjects hitObjects);
+        public abstract Builder hitObjects(List<String> hitObjects);
 
         public abstract Beatmap build();
     }
