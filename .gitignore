@@ -4,6 +4,7 @@ generated/
 generated_tests/
 out/
 osu.iml
+lib/
 
 ## Maven
 target/
