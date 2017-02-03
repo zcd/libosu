@@ -2,9 +2,9 @@
 osu! libraries for the JVM.
 
 ## Usage
-`com.zerocooldown.libosu.replay.io.ReplayIO` contains all the interesting bits.
 
-Example usage:
+### Replays Example
+See `com.zerocooldown.libosu.replay.io.ReplayIO`.
 
 ```
 Replay play = ReplayIO.read(
@@ -16,6 +16,18 @@ Replay play = ReplayIO.read(
 
 ByteArrayOutputStream out = new ByteArrayOutputStream();
 ReplayIO.write(play, out);
+```
+
+### Beatmaps example
+See `com.zerocooldown.libosu.beatmap.io.BeatmapReader`
+
+```
+Beatmap beatmap = BeatmapReader.read(
+                getClass()
+                        .getClassLoader()
+                        .getResourceAsStream("beatmaps/Halozy - Genryuu Kaiko (Hollow Wings) [Higan Torrent].osu");
+
+/* do interesting thing */
 ```
 
 ## Built With
