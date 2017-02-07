@@ -16,7 +16,7 @@ import com.zerocooldown.libosu.beatmap.section.General;
 import com.zerocooldown.libosu.beatmap.section.Metadata;
 import com.zerocooldown.libosu.constants.GameMode;
 
-import java.io.IOException;
+import java.io.Closeable;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
@@ -26,11 +26,14 @@ import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class BeatmapReader {
+public class BeatmapReader implements Closeable, AutoCloseable {
 
+    private static final Splitter COLON_PAIR_SPLITTER = Splitter.on(':').limit(2).trimResults();
     private static final Splitter COMMA_SPLITTER = Splitter.on(',').omitEmptyStrings();
     private static final Splitter PIPE_SPLITTER = Splitter.on('|');
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ');
+
+    private final Scanner scanner;
 
     /**
      * Parses a {@link Beatmap} instance from the input data.
@@ -39,51 +42,75 @@ public class BeatmapReader {
      *
      * @param source an {@link InputStream} containing an entire osu! beatmap file.
      * @return a parsed {@link Beatmap} instance.
-     * @throws IOException if an exception occurs when reading the stream.
      */
     public static Beatmap read(InputStream source) {
-        Scanner scanner = new Scanner(source);
+        try (Scanner scanner = new Scanner(source)) {
+            return new BeatmapReader(scanner).run();
+        }
+    }
 
-        Beatmap.Builder builder = Beatmap.builder();
+    private BeatmapReader(Scanner scanner) {
+        this.scanner = scanner;
+    }
 
-        builder.osuFormatVersion(scanner.nextLine());
+    @Override
+    public void close() {
+        scanner.close();
+    }
+
+    /**
+     * Parse a {@link Beatmap} instance from the underlying {@code Scanner}.
+     * <p>
+     * The instance is considered unusable after this is called.
+     *
+     * @return the {@link Beatmap} encoded in the underlying {@code Scanner}.
+     */
+    private Beatmap run() {
+        Beatmap.Builder builder = Beatmap.builder()
+                .osuFormatVersion(scanner.nextLine());
 
         String line;
-        while (!(line = skipEmptyLines(scanner).orElse("")).equals("")) {
+        while (!(line = skipEmptyLines().orElse("")).equals("")) {
             switch (line.substring(1, line.length() - 1)) {
                 case "General":
-                    builder.general(parseGeneral(scanner));
+                    builder.general(parseGeneral());
                     break;
                 case "Editor":
-                    builder.editor(parseEditor(scanner));
+                    builder.editor(parseEditor());
                     break;
                 case "Metadata":
-                    builder.metadata(parseMetadata(scanner));
+                    builder.metadata(parseMetadata());
                     break;
                 case "Difficulty":
-                    builder.difficulty(parseDifficulty(scanner));
+                    builder.difficulty(parseDifficulty());
                     break;
                 case "Events":
-                    builder.events(parseEvents(scanner));
+                    builder.events(parseEvents());
                     break;
                 case "TimingPoints":
-                    builder.timingPoints(parseTimingPoints(scanner));
+                    builder.timingPoints(parseTimingPoints());
                     break;
                 case "Colours":
-                    builder.colours(parseColours(scanner));
+                    builder.colours(parseColours());
                     break;
                 case "HitObjects":
-                    builder.hitObjects(parseHitObjects(scanner));
+                    builder.hitObjects(parseHitObjects());
                     break;
                 default:
                     throw new IllegalStateException("Encountered unrecognized header: " + line);
             }
         }
+        close();
 
         return builder.build();
     }
 
-    private static Optional<String> skipEmptyLines(Scanner scanner) {
+    /**
+     * Discards input until the first encountered non-empty line.
+     *
+     * @return The first encountered non-empty line or {@link Optional<String>.empty()} if no more lines are available.
+     */
+    private Optional<String> skipEmptyLines() {
         String line;
         do {
             if (!scanner.hasNextLine()) {
@@ -94,53 +121,61 @@ public class BeatmapReader {
         return Optional.of(line);
     }
 
-    private static void processNonEmptyLines(Consumer<String> processor, Scanner scanner) {
+    /**
+     * Applies the input {@code Consumer<String>} onto each line of the scanner while the line is non-empty.
+     *
+     * @param consumer Function to apply on each non-empty line.
+     */
+    private void consumeNonEmptyLines(Consumer<String> consumer) {
         String line;
         while (scanner.hasNextLine() && !(line = scanner.nextLine()).equals("")) {
-            processor.accept(line);
+            consumer.accept(line);
         }
     }
 
-    private static Map<String, String> readKeyValueSection(Scanner scanner) {
-        return readKeyValueSection(Function.identity(), Function.identity(), scanner);
-    }
-
-    private static <K, V> Map<K, V> readKeyValueSection(
-            Function<String, K> keyProcessor, Function<String, V> valueProcessor, Scanner scanner) {
+    /**
+     * Transforms entries of the form {@code key:value} with the given processor functions. The parsing ends when an
+     * empty line is encountered.
+     *
+     * @param keyProcessor   A {@code String} to {@code K} key transformer.
+     * @param valueProcessor {@code String} to {@code V} value transformer.
+     * @param <K>            The output key type.
+     * @param <V>            The output value type.
+     * @return The parsed key:value mapping.
+     */
+    private <K, V> Map<K, V> readKeyValueSection(
+            Function<String, K> keyProcessor, Function<String, V> valueProcessor) {
         ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
-        processNonEmptyLines(
+        consumeNonEmptyLines(
                 (String line) -> {
-                    String[] parts = line.split("\\s*:\\s*", 2);
-                    builder.put(keyProcessor.apply(parts[0]), valueProcessor.apply(parts[1]));
-                }, scanner);
+                    Iterator<String> parts = COLON_PAIR_SPLITTER.split(line).iterator();
+                    builder.put(
+                            keyProcessor.apply(parts.next()),
+                            valueProcessor.apply(parts.next()));
+                });
         return builder.build();
     }
 
-    private static <K, V> Optional<V> maybeGet(Map<K, V> map, K key) {
-        if (map.containsKey(key)) {
-            return Optional.of(map.get(key));
-        }
-        return Optional.empty();
+    private Map<String, String> readKeyValueSection() {
+        return readKeyValueSection(Function.identity(), Function.identity());
     }
 
-    private static <K, V> V mustGet(Map<K, V> map, K key, String mapName) {
-        Preconditions.checkState(
-                map.containsKey(key), String.format("Could not find '%s' in '%s'.", map, mapName));
-        return map.get(key);
-    }
-
-    private static <R> List<R> readListSection(Function<String, R> lineProcessor, Scanner scanner) {
+    /**
+     * Transforms lines until an empty line is encountered.
+     *
+     * @param lineProcessor A {@code String} to {@code R} line transformer.
+     * @param <R>           The output type of each parsed line.
+     * @return The parsed lines.
+     */
+    private <R> List<R> readListSection(Function<String, R> lineProcessor) {
         ImmutableList.Builder<R> builder = ImmutableList.builder();
-        processNonEmptyLines((String line) -> builder.add(lineProcessor.apply(line)), scanner);
+        consumeNonEmptyLines((String line) -> builder.add(lineProcessor.apply(line)));
         return builder.build();
     }
 
-    private static boolean asBool(String boolString) {
-        return 1 == Integer.parseInt(boolString);
-    }
-
-    private static General parseGeneral(Scanner scanner) {
-        Map<String, String> map = readKeyValueSection(scanner);
+    // Section parsers.
+    private General parseGeneral() {
+        Map<String, String> map = readKeyValueSection();
         Function<String, String> mustGet = (String aspect) -> mustGet(map, aspect, "General");
 
         GameMode mode;
@@ -174,8 +209,8 @@ public class BeatmapReader {
                 .build();
     }
 
-    private static Editor parseEditor(Scanner scanner) {
-        Map<String, String> map = readKeyValueSection(scanner);
+    private Editor parseEditor() {
+        Map<String, String> map = readKeyValueSection();
         Function<String, String> mustGet = (String aspect) -> mustGet(map, aspect, "Editor");
         return Editor.builder()
                 .bookmarks(ImmutableList.copyOf(Streams
@@ -188,8 +223,8 @@ public class BeatmapReader {
                 .build();
     }
 
-    private static Metadata parseMetadata(Scanner scanner) {
-        Map<String, String> map = readKeyValueSection(scanner);
+    private Metadata parseMetadata() {
+        Map<String, String> map = readKeyValueSection();
         Function<String, String> mustGet = (String aspect) -> mustGet(map, aspect, "Metadata");
         Metadata.Builder builder = Metadata.builder()
                 .title(mustGet.apply("Title"))
@@ -205,8 +240,8 @@ public class BeatmapReader {
         return builder.build();
     }
 
-    private static Difficulty parseDifficulty(Scanner scanner) {
-        Map<String, String> map = readKeyValueSection(scanner);
+    private Difficulty parseDifficulty() {
+        Map<String, String> map = readKeyValueSection();
         Function<String, Float> mustGet = (String aspect) ->
                 Float.parseFloat(mustGet(map, aspect, "Difficulty"));
         return Difficulty.builder()
@@ -219,11 +254,11 @@ public class BeatmapReader {
                 .build();
     }
 
-    private static Events parseEvents(Scanner scanner) {
-        return Events.create(readListSection(Function.identity(), scanner));
+    private Events parseEvents() {
+        return Events.create(readListSection(Function.identity()));
     }
 
-    private static List<TimingPoint> parseTimingPoints(Scanner scanner) {
+    private List<TimingPoint> parseTimingPoints() {
         return readListSection(
                 (String line) -> {
                     String[] parts = line.split(",", 8);
@@ -237,10 +272,10 @@ public class BeatmapReader {
                             .inherited(asBool(parts[6]))
                             .kiaiMode(asBool(parts[7]))
                             .build();
-                }, scanner);
+                });
     }
 
-    private static Map<Integer, Colour> parseColours(Scanner scanner) {
+    private Map<Integer, Colour> parseColours() {
 
         return readKeyValueSection(
                 (String rawKey) -> Integer.parseInt(rawKey.substring("combo".length())),
@@ -250,10 +285,10 @@ public class BeatmapReader {
                             Integer.parseInt(parts[0]),
                             Integer.parseInt(parts[1]),
                             Integer.parseInt(parts[2]));
-                }, scanner);
+                });
     }
 
-    private static List<HitObject> parseHitObjects(Scanner scanner) {
+    private List<HitObject> parseHitObjects() {
         Function<String, HitObject> lineParser = (String line) -> {
             Iterator<String> parts = COMMA_SPLITTER.split(line).iterator();
             HitObject.Builder builder = HitObject.builder()
@@ -291,10 +326,10 @@ public class BeatmapReader {
 
             return builder.build();
         };
-        return readListSection(lineParser, scanner);
+        return readListSection(lineParser);
     }
 
-    private static HitObject.SliderAttributes parseSliderAttributes(
+    private HitObject.SliderAttributes parseSliderAttributes(
             String rawSliderPoints, String rawRepeat, String rawPixelLength,
             String maybeRawEdgeHitSound, String maybeRawEdgeAddition) {
         Iterator<String> tokens = PIPE_SPLITTER.split(rawSliderPoints).iterator();
@@ -303,8 +338,10 @@ public class BeatmapReader {
 
         List<HitObject.Point> sliderPoints = ImmutableList.copyOf(Streams.stream(tokens)
                 .map((String rawPoint) -> {
-                    String[] pointParts = rawPoint.split(":", 2);
-                    return HitObject.Point.of(pointParts[0], pointParts[1]);
+                    Iterator<String> parts = COLON_PAIR_SPLITTER.split(rawPoint).iterator();
+                    return HitObject.Point.of(
+                            parts.next(),
+                            parts.next());
                 })
                 .iterator());
 
@@ -319,5 +356,23 @@ public class BeatmapReader {
             builder.edgeAddition(maybeRawEdgeAddition);
         }
         return builder.build();
+    }
+
+    // Utilities.
+    private static <K, V> Optional<V> maybeGet(Map<K, V> map, K key) {
+        if (map.containsKey(key)) {
+            return Optional.of(map.get(key));
+        }
+        return Optional.empty();
+    }
+
+    private static <K, V> V mustGet(Map<K, V> map, K key, String mapName) {
+        Preconditions.checkState(
+                map.containsKey(key), String.format("Could not find '%s' in '%s'.", map, mapName));
+        return map.get(key);
+    }
+
+    private static boolean asBool(String boolString) {
+        return 1 == Integer.parseInt(boolString);
     }
 }
