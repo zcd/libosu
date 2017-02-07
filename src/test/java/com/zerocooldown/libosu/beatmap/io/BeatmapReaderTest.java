@@ -15,13 +15,16 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Optional;
+import java.io.InputStream;
 
 public class BeatmapReaderTest {
     @Test
     public void read_HiganTorrent() throws Exception {
-        Beatmap beatmap = BeatmapReader.read(getClass().getClassLoader().getResourceAsStream(
-                "beatmaps/Halozy - Genryuu Kaiko (Hollow Wings) [Higan Torrent].osu"));
+        Beatmap beatmap;
+        try (InputStream source = getClass().getClassLoader().getResourceAsStream(
+                "beatmaps/Halozy - Genryuu Kaiko (Hollow Wings) [Higan Torrent].osu")) {
+            beatmap = BeatmapReader.read(source);
+        }
 
         Assert.assertEquals("osu file format v14", beatmap.osuFormatVersion());
 

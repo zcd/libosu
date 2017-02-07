@@ -12,6 +12,7 @@ import org.junit.experimental.categories.Category;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -22,8 +23,11 @@ public class ReplayIOTest {
 
     @Test
     public void read_FreedomDiveHDHR() throws Exception {
-        Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
-                "replays/cookiezi_freedomdive_hdhr.osr"));
+        Replay play;
+        try (InputStream source = getClass().getClassLoader().getResourceAsStream(
+                "replays/cookiezi_freedomdive_hdhr.osr")) {
+            play = ReplayIO.read(source);
+        }
         Metadata metadata = play.metadata();
         Assert.assertEquals("Cookiezi", metadata.playerName());
         Assert.assertEquals(GameMode.STANDARD, metadata.gameMode());
@@ -43,8 +47,11 @@ public class ReplayIOTest {
 
     @Test
     public void read_BlueZenithChoke() throws Exception {
-        Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
-                "replays/cookiezi_bluezenith_hr.osr"));
+        Replay play;
+        try (InputStream source = getClass().getClassLoader().getResourceAsStream(
+                "replays/cookiezi_bluezenith_hr.osr")) {
+            play = ReplayIO.read(source);
+        }
         Metadata metadata = play.metadata();
         Assert.assertEquals("Cookiezi", metadata.playerName());
         Assert.assertEquals(GameMode.STANDARD, metadata.gameMode());
@@ -64,8 +71,11 @@ public class ReplayIOTest {
 
     @Test
     public void read_Maniera() throws Exception {
-        Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
-                "replays/jhlee0133_maniera.osr"));
+        Replay play;
+        try (InputStream source = getClass().getClassLoader().getResourceAsStream(
+                "replays/jhlee0133_maniera.osr")) {
+            play = ReplayIO.read(source);
+        }
         Metadata metadata = play.metadata();
         Assert.assertEquals("jhlee0133", metadata.playerName());
         Assert.assertEquals(GameMode.MANIA, metadata.gameMode());
@@ -85,8 +95,11 @@ public class ReplayIOTest {
 
     @Test
     public void readWrite_FreedomDiveHDHR() throws Exception {
-        Replay play = ReplayIO.read(getClass().getClassLoader().getResourceAsStream(
-                "replays/cookiezi_freedomdive_hdhr.osr"));
+        Replay play;
+        try (InputStream source = getClass().getClassLoader().getResourceAsStream(
+                "replays/cookiezi_freedomdive_hdhr.osr")) {
+            play = ReplayIO.read(source);
+        }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ReplayIO.write(play, out);
