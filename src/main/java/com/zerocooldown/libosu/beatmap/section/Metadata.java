@@ -36,11 +36,11 @@ public abstract class Metadata {
 
         public abstract Builder title(String title);
 
-        public abstract Builder titleUnicode(Optional<String> titleUnicode);
+        public abstract Builder titleUnicode(String titleUnicode);
 
         public abstract Builder artist(String artist);
 
-        public abstract Builder artistUnicode(Optional<String> artistUnicode);
+        public abstract Builder artistUnicode(String artistUnicode);
 
         public abstract Builder creator(String creator);
 

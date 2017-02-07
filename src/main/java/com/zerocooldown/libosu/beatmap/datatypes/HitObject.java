@@ -1,64 +1,144 @@
 package com.zerocooldown.libosu.beatmap.datatypes;
 
-import com.zerocooldown.libosu.constants.BitmaskEnum;
 import com.google.auto.value.AutoValue;
+
+import java.util.List;
+import java.util.Optional;
+
+// TODO(zcd): implement full parsing for edgeHitSound, edgeAddition, and addition fields.
 
 @AutoValue
 public abstract class HitObject {
-    private static final int MASK_NEW_COMBO = 4;
+    public static final int MASK_NEW_COMBO = 4;
+
+    public abstract Point point();
+
+    public abstract int time();
+
+    public abstract int rawType();
+
+    public Type type() {
+        return Type.fromBits(rawType());
+    }
+
+    public boolean isNewCombo() {
+        return (rawType() & HitObject.MASK_NEW_COMBO) != 0;
+    }
+
+    public abstract int hitSound();
+
+    public abstract Optional<String> addition();
+
+    public abstract Optional<Integer> spinnerEndTime();
+
+    public abstract Optional<SliderAttributes> sliderAttributes();
 
     public static Builder builder() {
         return new AutoValue_HitObject.Builder();
     }
 
-    public abstract int x();
+    public enum Type {
+        CIRCLE, SLIDER, SPINNER;
 
-    public abstract int y();
-
-    public abstract int time();
-
-    public abstract Type type();
-
-    public boolean isNewCombo() {
-        return (type().getMask() & MASK_NEW_COMBO) != 0;
+        public static Type fromBits(int i) {
+            int masked = i & ~MASK_NEW_COMBO;
+            if ((masked & 1) != 0) {
+                return CIRCLE;
+            } else if ((masked & 2) != 0) {
+                return SLIDER;
+            } else if ((masked & 8) != 0) {
+                return SPINNER;
+            }
+            throw new IllegalArgumentException("Unrecognized HitObject type: " + i);
+        }
     }
 
-    public abstract int hitSound();
+    @AutoValue
+    public abstract static class SliderAttributes {
+        public abstract SliderType type();
 
-    public abstract Addition addition();
+        public abstract List<Point> sliderPoints();
 
-    public enum Type implements BitmaskEnum {
-        CIRCLE(1), SLIDER(2), SPINNER(8);
+        public abstract int repeat();
 
-        private final int mask;
+        public abstract float pixelLength();
 
-        Type(int mask) {
-            this.mask = mask;
+        public abstract Optional<String> edgeHitSound();
+
+        public abstract Optional<String> edgeAddition();
+
+        public static Builder builder() {
+            return new AutoValue_HitObject_SliderAttributes.Builder();
         }
 
-        @Override
-        public int getMask() {
-            return mask;
+        public enum SliderType {
+            CATMULL, BEZIER, LINEAR, PERFECT_CURVE;
+
+            public static SliderType of(char c) {
+                switch (c) {
+                    case 'C':
+                        return CATMULL;
+                    case 'B':
+                        return BEZIER;
+                    case 'L':
+                        return LINEAR;
+                    case 'P':
+                        return PERFECT_CURVE;
+                    default:
+                        throw new IllegalArgumentException("Unrecognized Slider type: " + c);
+                }
+            }
+        }
+
+        @AutoValue.Builder
+        public abstract static class Builder {
+            public abstract Builder type(SliderType type);
+
+            public abstract Builder sliderPoints(List<Point> sliderPoints);
+
+            public abstract Builder repeat(int repeat);
+
+            public abstract Builder pixelLength(float pixelLength);
+
+            public abstract Builder edgeHitSound(String edgeHitSound);
+
+            public abstract Builder edgeAddition(String edgeAddition);
+
+            public abstract SliderAttributes build();
+        }
+    }
+
+    @AutoValue
+    public abstract static class Point {
+        public abstract int x();
+
+        public abstract int y();
+
+        public static Point of(int x, int y) {
+            return new AutoValue_HitObject_Point(x, y);
+        }
+
+        public static Point of(String x, String y) {
+            return of(Integer.parseInt(x), Integer.parseInt(y));
         }
     }
 
     @AutoValue.Builder
     public abstract static class Builder {
-        public abstract Builder x(int x);
-
-        public abstract Builder y(int y);
+        public abstract Builder point(Point point);
 
         public abstract Builder time(int time);
 
-        public abstract Builder type(Type type);
+        public abstract Builder rawType(int rawType);
 
         public abstract Builder hitSound(int hitSound);
 
-        public abstract Builder addition(Addition addition);
+        public abstract Builder addition(String addition);
+
+        public abstract Builder spinnerEndTime(int spinnerEndTime);
+
+        public abstract Builder sliderAttributes(SliderAttributes sliderAttributes);
 
         public abstract HitObject build();
-    }
-
-    public abstract class Addition {
     }
 }

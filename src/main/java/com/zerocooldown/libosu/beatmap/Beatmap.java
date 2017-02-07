@@ -2,6 +2,7 @@ package com.zerocooldown.libosu.beatmap;
 
 import com.google.auto.value.AutoValue;
 import com.zerocooldown.libosu.beatmap.datatypes.Colour;
+import com.zerocooldown.libosu.beatmap.datatypes.HitObject;
 import com.zerocooldown.libosu.beatmap.datatypes.TimingPoint;
 import com.zerocooldown.libosu.beatmap.section.Difficulty;
 import com.zerocooldown.libosu.beatmap.section.Editor;
@@ -12,6 +13,9 @@ import com.zerocooldown.libosu.beatmap.section.Metadata;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Data class for a <a href="https://osu.ppy.sh/wiki/Osu_%28file_format%29">osu! beatmap file</a>.
+ */
 @AutoValue
 public abstract class Beatmap {
     public abstract String osuFormatVersion();
@@ -30,8 +34,7 @@ public abstract class Beatmap {
 
     public abstract Map<Integer, Colour> colours();
 
-    // TODO(zcd): String -> HitObject
-    public abstract List<String> hitObjects();
+    public abstract List<HitObject> hitObjects();
 
     public static Builder builder() {
         return new AutoValue_Beatmap.Builder();
@@ -55,7 +58,7 @@ public abstract class Beatmap {
 
         public abstract Builder colours(Map<Integer, Colour> colours);
 
-        public abstract Builder hitObjects(List<String> hitObjects);
+        public abstract Builder hitObjects(List<HitObject> hitObjects);
 
         public abstract Beatmap build();
     }

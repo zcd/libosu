@@ -7,7 +7,7 @@ import java.io.OutputStream;
 
 public class BeatmapWriter {
 
-    public static void write(Beatmap source, OutputStream sink) throws IOException {
+    public static void write(Beatmap source, OutputStream sink) {
 
     }
 }
