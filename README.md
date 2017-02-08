@@ -14,7 +14,7 @@ Replay play = ReplayIO.read(
 
 /* do interesting thing */
 
-ByteArrayOutputStream out = new ByteArrayOutputStream();
+OutputStream out = new FileOutputStream(myModifiedReplayPath);
 ReplayIO.write(play, out);
 ```
 
@@ -28,6 +28,8 @@ Beatmap beatmap = BeatmapReader.read(
                         .getResourceAsStream("beatmaps/Halozy - Genryuu Kaiko (Hollow Wings) [Higan Torrent].osu");
 
 /* do interesting thing */
+OutputStream out = new FileOutputStream(myModifiedBeatmapPath);
+BeatmapWriter.write(beatmap, out);
 ```
 
 ## Built With
