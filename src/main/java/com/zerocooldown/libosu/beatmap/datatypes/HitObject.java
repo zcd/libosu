@@ -29,7 +29,7 @@ public abstract class HitObject {
 
     public abstract Optional<String> addition();
 
-    public abstract Optional<Integer> spinnerEndTime();
+    public abstract Optional<Float> spinnerEndTime();
 
     public abstract Optional<SliderAttributes> sliderAttributes();
 
@@ -135,7 +135,7 @@ public abstract class HitObject {
 
         public abstract Builder addition(String addition);
 
-        public abstract Builder spinnerEndTime(int spinnerEndTime);
+        public abstract Builder spinnerEndTime(float spinnerEndTime);
 
         public abstract Builder sliderAttributes(SliderAttributes sliderAttributes);
 

@@ -316,7 +316,7 @@ public class BeatmapReader implements Closeable, AutoCloseable {
                             parts.hasNext() ? parts.next() : null));
                     break;
                 case SPINNER:
-                    builder.spinnerEndTime(Integer.parseInt(parts.next()));
+                    builder.spinnerEndTime(Float.parseFloat(parts.next()));
                     break;
             }
 
