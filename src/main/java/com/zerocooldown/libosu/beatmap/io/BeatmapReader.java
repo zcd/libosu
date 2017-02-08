@@ -1,5 +1,6 @@
 package com.zerocooldown.libosu.beatmap.io;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -30,8 +31,8 @@ public class BeatmapReader implements Closeable, AutoCloseable {
 
     private static final Splitter COLON_PAIR_SPLITTER = Splitter.on(':').limit(2).trimResults();
     private static final Splitter COMMA_SPLITTER = Splitter.on(',').omitEmptyStrings();
+    private static final Splitter LIST_SPLITTER = Splitter.on(CharMatcher.anyOf(" ,")).omitEmptyStrings();
     private static final Splitter PIPE_SPLITTER = Splitter.on('|');
-    private static final Splitter SPACE_SPLITTER = Splitter.on(' ');
 
     private final Scanner scanner;
 
@@ -66,7 +67,11 @@ public class BeatmapReader implements Closeable, AutoCloseable {
      * @return the {@link Beatmap} encoded in the underlying {@code Scanner}.
      */
     private Beatmap run() {
+        // Defaults
         Beatmap.Builder builder = Beatmap.builder()
+                .colours(ImmutableMap.of());
+
+        builder
                 .osuFormatVersion(scanner.nextLine());
 
         String line;
@@ -214,7 +219,7 @@ public class BeatmapReader implements Closeable, AutoCloseable {
         Function<String, String> mustGet = (String aspect) -> mustGet(map, aspect, "Editor");
         return Editor.builder()
                 .bookmarks(ImmutableList.copyOf(Streams
-                        .stream(COMMA_SPLITTER.split(maybeGet(map, "Bookmarks").orElse("")))
+                        .stream(LIST_SPLITTER.split(maybeGet(map, "Bookmarks").orElse("")))
                         .mapToInt(Integer::parseInt).iterator()))
                 .distanceSpacing(Float.parseFloat(mustGet.apply("DistanceSpacing")))
                 .beatDivisor(Integer.parseInt(mustGet.apply("BeatDivisor")))
@@ -232,7 +237,7 @@ public class BeatmapReader implements Closeable, AutoCloseable {
                 .creator(mustGet.apply("Creator"))
                 .version(mustGet.apply("Version"))
                 .source(mustGet.apply("Source"))
-                .tags(maybeGet(map, "Tags").map(SPACE_SPLITTER::splitToList).orElse(ImmutableList.of()))
+                .tags(maybeGet(map, "Tags").map(LIST_SPLITTER::splitToList).orElse(ImmutableList.of()))
                 .beatmapID(Integer.parseInt(mustGet.apply("BeatmapID")))
                 .beatmapSetID(Integer.parseInt(mustGet.apply("BeatmapSetID")));
         maybeGet(map, "TitleUnicode").ifPresent(builder::titleUnicode);
@@ -368,7 +373,7 @@ public class BeatmapReader implements Closeable, AutoCloseable {
 
     private static <K, V> V mustGet(Map<K, V> map, K key, String mapName) {
         Preconditions.checkState(
-                map.containsKey(key), String.format("Could not find '%s' in '%s'.", map, mapName));
+                map.containsKey(key), String.format("Could not find '%s' in '%s'.", key, mapName));
         return map.get(key);
     }
 

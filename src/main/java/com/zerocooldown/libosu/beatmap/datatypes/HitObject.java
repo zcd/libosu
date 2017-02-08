@@ -72,7 +72,17 @@ public abstract class HitObject {
         }
 
         public enum SliderType {
-            CATMULL, BEZIER, LINEAR, PERFECT_CURVE;
+            CATMULL('C'), BEZIER('B'), LINEAR('L'), PERFECT_CURVE('P');
+
+            private final char c;
+
+            SliderType(char c) {
+                this.c = c;
+            }
+
+            public char asChar() {
+                return c;
+            }
 
             public static SliderType of(char c) {
                 switch (c) {

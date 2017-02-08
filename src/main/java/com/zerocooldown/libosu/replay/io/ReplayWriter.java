@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Wrapper class around a {@link LittleEndianDataOutputStream} that specially handles osu! com.zerocooldown.libosu.replay data types.
+ * Wrapper class around a {@link LittleEndianDataOutputStream} that specially handles osu! replay data types.
  */
 public class ReplayWriter implements Closeable, AutoCloseable, Flushable {
     private final LittleEndianDataOutputStream out;
