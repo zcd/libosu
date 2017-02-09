@@ -1,4 +1,4 @@
-package com.zerocooldown.libosu.constants;
+package com.zerocooldown.libosu.common;
 
 /**
  * See <a href="https://osu.ppy.sh/wiki/Osr_(file_format)#Data%20Types">osu! replay file format reference.</a>

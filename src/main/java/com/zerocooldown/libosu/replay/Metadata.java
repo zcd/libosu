@@ -1,7 +1,7 @@
 package com.zerocooldown.libosu.replay;
 
-import com.zerocooldown.libosu.constants.GameMode;
-import com.zerocooldown.libosu.constants.Mod;
+import com.zerocooldown.libosu.common.GameMode;
+import com.zerocooldown.libosu.common.Mod;
 import com.google.auto.value.AutoValue;
 
 import java.util.EnumSet;

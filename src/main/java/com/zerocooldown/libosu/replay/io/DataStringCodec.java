@@ -1,7 +1,7 @@
 package com.zerocooldown.libosu.replay.io;
 
-import com.zerocooldown.libosu.constants.BitmaskEnum;
-import com.zerocooldown.libosu.constants.KeyStroke;
+import com.zerocooldown.libosu.common.BitmaskEnum;
+import com.zerocooldown.libosu.common.KeyStroke;
 import com.zerocooldown.libosu.replay.LifeBarSample;
 import com.zerocooldown.libosu.replay.Moment;
 import com.google.common.collect.ImmutableList;
@@ -124,8 +124,8 @@ public final class DataStringCodec {
         return String.format(
                 "%d|%.4f|%.4f|%d",
                 moment.millisSincePrev(),
-                moment.cursorX(),
-                moment.cursorY(),
+                moment.cursor().x(),
+                moment.cursor().y(),
                 BitmaskEnum.toMask(moment.keys()));
     }
 

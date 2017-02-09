@@ -1,8 +1,8 @@
 package com.zerocooldown.libosu.replay.io;
 
-import com.zerocooldown.libosu.constants.BitmaskEnum;
-import com.zerocooldown.libosu.constants.GameMode;
-import com.zerocooldown.libosu.constants.Mod;
+import com.zerocooldown.libosu.common.BitmaskEnum;
+import com.zerocooldown.libosu.common.GameMode;
+import com.zerocooldown.libosu.common.Mod;
 import com.zerocooldown.libosu.replay.Metadata;
 import com.zerocooldown.libosu.replay.Replay;
 import lzma.sdk.lzma.Decoder;

@@ -1,6 +1,6 @@
 package com.zerocooldown.libosu.beatmap.section;
 
-import com.zerocooldown.libosu.constants.GameMode;
+import com.zerocooldown.libosu.common.GameMode;
 import com.google.auto.value.AutoValue;
 
 @AutoValue

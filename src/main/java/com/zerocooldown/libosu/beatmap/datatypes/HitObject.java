@@ -1,6 +1,7 @@
 package com.zerocooldown.libosu.beatmap.datatypes;
 
 import com.google.auto.value.AutoValue;
+import com.zerocooldown.libosu.common.Point;
 
 import java.util.List;
 import java.util.Optional;
@@ -115,21 +116,6 @@ public abstract class HitObject {
             public abstract Builder edgeAddition(String edgeAddition);
 
             public abstract SliderAttributes build();
-        }
-    }
-
-    @AutoValue
-    public abstract static class Point {
-        public abstract int x();
-
-        public abstract int y();
-
-        public static Point of(int x, int y) {
-            return new AutoValue_HitObject_Point(x, y);
-        }
-
-        public static Point of(String x, String y) {
-            return of(Integer.parseInt(x), Integer.parseInt(y));
         }
     }
 

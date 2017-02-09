@@ -10,7 +10,8 @@ import com.zerocooldown.libosu.beatmap.section.Difficulty;
 import com.zerocooldown.libosu.beatmap.section.Editor;
 import com.zerocooldown.libosu.beatmap.section.General;
 import com.zerocooldown.libosu.beatmap.section.Metadata;
-import com.zerocooldown.libosu.constants.GameMode;
+import com.zerocooldown.libosu.common.GameMode;
+import com.zerocooldown.libosu.common.Point;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -137,18 +138,18 @@ public class BeatmapReaderTest {
         HitObject obj = beatmap.hitObjects().get(0);
         Assert.assertEquals(
                 HitObject.builder()
-                        .point(HitObject.Point.of(76, 270))
+                        .point(Point.of(76, 270))
                         .time(1619)
                         .rawType(6)
                         .hitSound(0)
                         .sliderAttributes(HitObject.SliderAttributes.builder()
                                 .type(HitObject.SliderAttributes.SliderType.BEZIER)
-                                .sliderPoints(ImmutableList.<HitObject.Point>builder()
-                                        .add(HitObject.Point.of(106, 271)).add(HitObject.Point.of(128, 253))
-                                        .add(HitObject.Point.of(128, 253)).add(HitObject.Point.of(144, 272))
-                                        .add(HitObject.Point.of(178, 280)).add(HitObject.Point.of(178, 280))
-                                        .add(HitObject.Point.of(201, 258)).add(HitObject.Point.of(241, 250))
-                                        .add(HitObject.Point.of(276, 264))
+                                .sliderPoints(ImmutableList.<Point>builder()
+                                        .add(Point.of(106, 271)).add(Point.of(128, 253))
+                                        .add(Point.of(128, 253)).add(Point.of(144, 272))
+                                        .add(Point.of(178, 280)).add(Point.of(178, 280))
+                                        .add(Point.of(201, 258)).add(Point.of(241, 250))
+                                        .add(Point.of(276, 264))
                                         .build())
                                 .repeat(1)
                                 .pixelLength(210)
@@ -165,14 +166,14 @@ public class BeatmapReaderTest {
         obj = beatmap.hitObjects().get(247 - 131);
         Assert.assertEquals(
                 HitObject.builder()
-                        .point(HitObject.Point.of(189, 161))
+                        .point(Point.of(189, 161))
                         .time(30579)
                         .rawType(2)
                         .hitSound(0)
                         .sliderAttributes(HitObject.SliderAttributes.builder()
                                 .type(HitObject.SliderAttributes.SliderType.PERFECT_CURVE)
                                 .sliderPoints(ImmutableList.of(
-                                        HitObject.Point.of(210, 120), HitObject.Point.of(203, 78)))
+                                        Point.of(210, 120), Point.of(203, 78)))
                                 .repeat(1)
                                 .pixelLength(70)
                                 .build())
@@ -185,7 +186,7 @@ public class BeatmapReaderTest {
         obj = beatmap.hitObjects().get(620 - 131);
         Assert.assertEquals(
                 HitObject.builder()
-                        .point(HitObject.Point.of(25, 313))
+                        .point(Point.of(25, 313))
                         .time(90752)
                         .rawType(1)
                         .hitSound(8)
@@ -199,7 +200,7 @@ public class BeatmapReaderTest {
         obj = beatmap.hitObjects().get(631 - 131);
         Assert.assertEquals(
                 HitObject.builder()
-                        .point(HitObject.Point.of(116, 282))
+                        .point(Point.of(116, 282))
                         .time(91792)
                         .rawType(5)
                         .hitSound(4)
@@ -213,13 +214,13 @@ public class BeatmapReaderTest {
         obj = beatmap.hitObjects().get(1393 - 131);
         Assert.assertEquals(
                 HitObject.builder()
-                        .point(HitObject.Point.of(127, 253))
+                        .point(Point.of(127, 253))
                         .time(222891)
                         .rawType(2)
                         .hitSound(0)
                         .sliderAttributes(HitObject.SliderAttributes.builder()
                                 .type(HitObject.SliderAttributes.SliderType.LINEAR)
-                                .sliderPoints(ImmutableList.of(HitObject.Point.of(136, 207)))
+                                .sliderPoints(ImmutableList.of(Point.of(136, 207)))
                                 .repeat(4)
                                 .pixelLength(43.75f)
                                 .edgeHitSound("2|0|0|0|4")
@@ -235,7 +236,7 @@ public class BeatmapReaderTest {
         obj = beatmap.hitObjects().get(2022 - 131);
         Assert.assertEquals(
                 HitObject.builder()
-                        .point(HitObject.Point.of(256, 192))
+                        .point(Point.of(256, 192))
                         .time(301359)
                         .rawType(12)
                         .hitSound(0)

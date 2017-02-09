@@ -10,6 +10,7 @@ import com.zerocooldown.libosu.beatmap.section.Difficulty;
 import com.zerocooldown.libosu.beatmap.section.Editor;
 import com.zerocooldown.libosu.beatmap.section.General;
 import com.zerocooldown.libosu.beatmap.section.Metadata;
+import com.zerocooldown.libosu.common.Point;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -23,7 +24,7 @@ import java.util.function.Function;
 
 /**
  * File writer for osu! beatmaps.
- *
+ * <p>
  * The written beatmap is **not** guaranteed to be bitwise identical to the file it was read from.
  */
 public class BeatmapWriter implements Closeable, AutoCloseable, Flushable {
@@ -40,7 +41,7 @@ public class BeatmapWriter implements Closeable, AutoCloseable, Flushable {
      * See <a href="https://osu.ppy.sh/wiki/Osu_%28file_format%29#Sections">osu! wiki page</a> for the full file spec.
      *
      * @param source a {@link Beatmap} instance to write.
-     * @param sink the stream to write to.
+     * @param sink   the stream to write to.
      */
     public static void write(Beatmap source, OutputStream sink) throws IOException {
         new BeatmapWriter(new BufferedWriter(new OutputStreamWriter(sink, Charsets.UTF_8))).run(source);
@@ -162,9 +163,9 @@ public class BeatmapWriter implements Closeable, AutoCloseable, Flushable {
         writeSectionHeader("TimingPoints");
         writeList(
                 beatmap.timingPoints(),
-                (TimingPoint p) -> String.format("%d,%f,%d,%d,%d,%d,%d,%d",
+                (TimingPoint p) -> String.format("%d,%s,%d,%d,%d,%d,%d,%d",
                         p.offset(),
-                        p.millisecondsPerBeat(),
+                        prettyFloat(p.millisecondsPerBeat()),
                         p.meter(),
                         p.sampleType(),
                         p.sampleSet(),
@@ -187,8 +188,12 @@ public class BeatmapWriter implements Closeable, AutoCloseable, Flushable {
         writeList(
                 beatmap.hitObjects(),
                 (HitObject o) -> {
-                    String base = String.format(
-                            "%d,%d,%d,%d,%d", o.point().x(), o.point().y(), o.time(), o.rawType(), o.hitSound());
+                    String base = String.format("%s,%s,%d,%d,%d",
+                            prettyFloat(o.point().x()),
+                            prettyFloat(o.point().y()),
+                            o.time(),
+                            o.rawType(),
+                            o.hitSound());
                     String maybeAttributes = null;
 
                     switch (o.type()) {
@@ -203,7 +208,8 @@ public class BeatmapWriter implements Closeable, AutoCloseable, Flushable {
                                     builder,
                                     attrs.sliderPoints()
                                             .stream()
-                                            .map((HitObject.Point p) -> String.format("%d:%d", p.x(), p.y()))
+                                            .map((Point p) -> String.format("%s:%s",
+                                                    prettyFloat(p.x()), prettyFloat(p.y())))
                                             .iterator());
                             builder.append(',');
                             COMMA_JOINER.appendTo(
@@ -253,5 +259,10 @@ public class BeatmapWriter implements Closeable, AutoCloseable, Flushable {
 
     private static int toNumericBool(boolean b) {
         return b ? 1 : 0;
+    }
+
+    private static String prettyFloat(float f) {
+        long l = (long) f;
+        return l == f ? String.valueOf(l) : String.valueOf(f);
     }
 }

@@ -15,7 +15,8 @@ import com.zerocooldown.libosu.beatmap.section.Editor;
 import com.zerocooldown.libosu.beatmap.section.Events;
 import com.zerocooldown.libosu.beatmap.section.General;
 import com.zerocooldown.libosu.beatmap.section.Metadata;
-import com.zerocooldown.libosu.constants.GameMode;
+import com.zerocooldown.libosu.common.GameMode;
+import com.zerocooldown.libosu.common.Point;
 
 import java.io.Closeable;
 import java.io.InputStream;
@@ -297,7 +298,7 @@ public class BeatmapReader implements Closeable, AutoCloseable {
         Function<String, HitObject> lineParser = (String line) -> {
             Iterator<String> parts = COMMA_SPLITTER.split(line).iterator();
             HitObject.Builder builder = HitObject.builder()
-                    .point(HitObject.Point.of(
+                    .point(Point.of(
                             parts.next(),
                             parts.next()))
                     .time(Integer.parseInt(parts.next()));
@@ -341,10 +342,10 @@ public class BeatmapReader implements Closeable, AutoCloseable {
         HitObject.SliderAttributes.Builder builder = HitObject.SliderAttributes.builder()
                 .type(HitObject.SliderAttributes.SliderType.of(tokens.next().charAt(0)));
 
-        List<HitObject.Point> sliderPoints = ImmutableList.copyOf(Streams.stream(tokens)
+        List<Point> sliderPoints = ImmutableList.copyOf(Streams.stream(tokens)
                 .map((String rawPoint) -> {
                     Iterator<String> parts = COLON_PAIR_SPLITTER.split(rawPoint).iterator();
-                    return HitObject.Point.of(
+                    return Point.of(
                             parts.next(),
                             parts.next());
                 })

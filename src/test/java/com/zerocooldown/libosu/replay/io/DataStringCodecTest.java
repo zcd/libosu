@@ -1,6 +1,6 @@
 package com.zerocooldown.libosu.replay.io;
 
-import com.zerocooldown.libosu.constants.KeyStroke;
+import com.zerocooldown.libosu.common.KeyStroke;
 import com.zerocooldown.libosu.replay.LifeBarSample;
 import com.zerocooldown.libosu.replay.Moment;
 import com.zerocooldown.libosu.testutil.TestCategories;
@@ -18,9 +18,9 @@ import org.junit.runner.RunWith;
 import java.util.EnumSet;
 import java.util.List;
 
-import static com.zerocooldown.libosu.constants.KeyStroke.KEY1;
-import static com.zerocooldown.libosu.constants.KeyStroke.KEY2;
-import static com.zerocooldown.libosu.constants.KeyStroke.MOUSE2;
+import static com.zerocooldown.libosu.common.KeyStroke.KEY1;
+import static com.zerocooldown.libosu.common.KeyStroke.KEY2;
+import static com.zerocooldown.libosu.common.KeyStroke.MOUSE2;
 
 @RunWith(JUnitQuickcheck.class)
 @Category(TestCategories.UnitTest.class)
@@ -36,8 +36,8 @@ public class DataStringCodecTest {
     public void parseMoment() throws Exception {
         Moment moment = DataStringCodec.parseMoment("10|1.5|3.14|15");
         Assert.assertEquals(10, moment.millisSincePrev());
-        Assert.assertEquals(1.5, moment.cursorX(), EPSILON);
-        Assert.assertEquals(3.14, moment.cursorY(), EPSILON);
+        Assert.assertEquals(1.5, moment.cursor().x(), EPSILON);
+        Assert.assertEquals(3.14, moment.cursor().y(), EPSILON);
         Assert.assertTrue(moment.keys().containsAll(EnumSet.of(KEY1, KEY2)));
     }
 
@@ -54,8 +54,8 @@ public class DataStringCodecTest {
 
         Moment moment = moments.get(0);
         Assert.assertEquals(10, moment.millisSincePrev());
-        Assert.assertEquals(1.5, moment.cursorX(), EPSILON);
-        Assert.assertEquals(3.14, moment.cursorY(), EPSILON);
+        Assert.assertEquals(1.5, moment.cursor().x(), EPSILON);
+        Assert.assertEquals(3.14, moment.cursor().y(), EPSILON);
         Assert.assertTrue(moment.keys().containsAll(EnumSet.of(KEY1, KEY2)));
     }
 
@@ -67,14 +67,14 @@ public class DataStringCodecTest {
 
         moment = moments.get(0);
         Assert.assertEquals(10, moment.millisSincePrev());
-        Assert.assertEquals(1.5, moment.cursorX(), EPSILON);
-        Assert.assertEquals(3.14, moment.cursorY(), EPSILON);
+        Assert.assertEquals(1.5, moment.cursor().x(), EPSILON);
+        Assert.assertEquals(3.14, moment.cursor().y(), EPSILON);
         Assert.assertTrue(moment.keys().containsAll(EnumSet.of(KEY1, KEY2)));
 
         moment = moments.get(1);
         Assert.assertEquals(5, moment.millisSincePrev());
-        Assert.assertEquals(120, moment.cursorX(), EPSILON);
-        Assert.assertEquals(120.1, moment.cursorY(), EPSILON);
+        Assert.assertEquals(120, moment.cursor().x(), EPSILON);
+        Assert.assertEquals(120.1, moment.cursor().y(), EPSILON);
         Assert.assertTrue(moment.keys().containsAll(EnumSet.of(MOUSE2)));
     }
 
@@ -83,8 +83,8 @@ public class DataStringCodecTest {
         Moment recycled = DataStringCodec.parseMoment(DataStringCodec.encodeMoment(moment));
         Assert.assertEquals(moment.millisSincePrev(), recycled.millisSincePrev());
         Assert.assertTrue(moment.keys().equals(recycled.keys()));
-        Assert.assertEquals(moment.cursorX(), recycled.cursorX(), EPSILON);
-        Assert.assertEquals(moment.cursorY(), recycled.cursorY(), EPSILON);
+        Assert.assertEquals(moment.cursor().x(), recycled.cursor().x(), EPSILON);
+        Assert.assertEquals(moment.cursor().y(), recycled.cursor().y(), EPSILON);
     }
 
     @Property

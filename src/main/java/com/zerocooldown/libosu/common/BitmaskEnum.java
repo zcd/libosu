@@ -1,4 +1,4 @@
-package com.zerocooldown.libosu.constants;
+package com.zerocooldown.libosu.common;
 
 import java.util.EnumSet;
 

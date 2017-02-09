@@ -1,7 +1,7 @@
 package com.zerocooldown.libosu.replay.io;
 
-import com.zerocooldown.libosu.constants.GameMode;
-import com.zerocooldown.libosu.constants.Mod;
+import com.zerocooldown.libosu.common.GameMode;
+import com.zerocooldown.libosu.common.Mod;
 import com.zerocooldown.libosu.replay.Metadata;
 import com.zerocooldown.libosu.replay.Moment;
 import com.zerocooldown.libosu.replay.Replay;
@@ -118,8 +118,8 @@ public class ReplayIOTest {
 
             Assert.assertEquals(m1.millisSincePrev(), m2.millisSincePrev());
             Assert.assertEquals(m1.keys(), m2.keys());
-            Assert.assertEquals(m1.cursorX(), m2.cursorX(), EPSILON);
-            Assert.assertEquals(m1.cursorY(), m2.cursorY(), EPSILON);
+            Assert.assertEquals(m1.cursor().x(), m2.cursor().x(), EPSILON);
+            Assert.assertEquals(m1.cursor().y(), m2.cursor().y(), EPSILON);
         }
     }
 }
